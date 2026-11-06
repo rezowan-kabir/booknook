@@ -32,13 +32,22 @@ const NewArrivals = async () => {
     throw new Error("BACKEND_NEW_ARRIVEL_URL is not configured.");
   }
 
-  const res = await fetch(apiUrl, { cache: "no-store" });
+  let books: Book[] | null = null;
 
-  if (!res.ok) {
-    throw new Error(`Failed to fetch new arrivals: ${res.status} ${res.statusText}`);
+  try {
+    const res = await fetch(apiUrl, { cache: "no-store" });
+
+    if (!res.ok) {
+      throw new Error(
+        `Failed to fetch new arrivals: ${res.status} ${res.statusText}`,
+      );
+    }
+
+    books = await res.json();
+  } catch (error) {
+    // Backend unreachable or errored — degrade instead of crashing the homepage.
+    console.error("Failed to load new arrivals:", error);
   }
-
-  const books: Book[] = await res.json();
 
   return (
     <section>
@@ -69,7 +78,17 @@ const NewArrivals = async () => {
 
       <div className="mb-8 border-b border-stone-200 dark:border-stone-800" />
 
-      {books.length === 0 ? (
+      {books === null ? (
+        <div className="rounded-xl border border-dashed border-stone-300 py-12 text-center dark:border-stone-700">
+          <BookOpen className="mx-auto mb-3 h-8 w-8 text-stone-300 dark:text-stone-600" />
+          <p className="text-sm font-medium text-stone-600 dark:text-stone-300">
+            New arrivals are temporarily unavailable.
+          </p>
+          <p className="mt-1 text-xs text-stone-400 dark:text-stone-500">
+            Please check back soon.
+          </p>
+        </div>
+      ) : books.length === 0 ? (
         <p className="py-12 text-center text-sm text-stone-500 dark:text-stone-400">
           No new arrivals yet.
         </p>

@@ -23,7 +23,7 @@ MONGO_DB_URL=...                                              # MongoDB — requ
 BETTER_AUTH_SECRET=...  BETTER_AUTH_URL=http://localhost:3000 # Better Auth
 ```
 
-- A separate backend service (port 8000) must be running for most pages to render. The homepage (`src/components/new-arrivals.tsx`, a server component with `cache: "no-store"`) **throws** if `BACKEND_NEW_ARRIVEL_URL` is unset or the fetch fails — no fallback. `/all-books` degrades to an error toast; `/all-books/:id` renders a failure message.
+- A separate backend service (port 8000) must be running for most pages to render. The homepage's `NewArrivals` server component (`cache: "no-store"`) degrades to a "temporarily unavailable" notice when the backend is down — it still **throws** if `BACKEND_NEW_ARRIVEL_URL` is unset (a config error worth surfacing). `/all-books` degrades to an error toast; `/all-books/:id` renders a "Failed to load book details" page on network failure.
 - Only `NEXT_PUBLIC_*` vars are inlined into client components; the others are `undefined` in the browser. Note that `all-books/page.tsx` and `add-book/page.tsx` are `"use client"` yet read `BACKEND_BASE_URL` — all-books guards it with a hardcoded `http://localhost:8000` fallback, add-book has none. Put backend calls in server components or route handlers (or promote the var to `NEXT_PUBLIC_`).
 - `GITHUB_CLIENT_ID`/`GITHUB_CLIENT_SECRET` are absent, so `next build` prints `[Better Auth]: Social provider github is missing clientId or clientSecret` — harmless, but social sign-in can't work until they're added.
 

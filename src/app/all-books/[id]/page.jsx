@@ -7,11 +7,20 @@ import BorrowBookModal from "./BorrowBookModal";
 const BookDetailsPage = async ({ params }) => {
   const { id } = await params;
 
-  const res = await fetch(`${process.env.BACKEND_BASE_URL}/all-books/${id}`, {
-    cache: "no-store",
-  });
+  let data;
+  try {
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/all-books/${id}`, {
+      cache: "no-store",
+    });
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error(`Failed to load book details: ${res.status}`);
+    }
+
+    data = await res.json();
+  } catch (error) {
+    // Backend unreachable or errored — degrade instead of crashing the page.
+    console.error("Failed to load book details:", error);
     return (
       <div className="min-h-screen flex items-center justify-center">
         <h2 className="text-xl font-semibold">Failed to load book details.</h2>
@@ -19,7 +28,6 @@ const BookDetailsPage = async ({ params }) => {
     );
   }
 
-  const data = await res.json();
   const book = data.result;
 
   if (!book) {
