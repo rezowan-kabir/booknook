@@ -226,7 +226,7 @@ export default function AllBooksPage() {
             <Card
               key={book._id}
               className="group overflow-hidden bg-white dark:bg-stone-900/60 border-stone-200/80 dark:border-stone-800 hover:border-stone-300 dark:hover:border-stone-700 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer rounded-xl flex flex-col"
-              onClick={() => router.push(`/books/${book._id}`)}
+              onClick={() => router.push(`/all-books/${book._id}`)}
             >
               {/* Book Cover Container (Editorial Aspect Ratio) */}
               <div className="relative aspect-[4/3] overflow-hidden bg-stone-100 dark:bg-stone-800">

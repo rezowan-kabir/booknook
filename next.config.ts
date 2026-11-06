@@ -16,6 +16,34 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com", // এটি যোগ করা হয়েছে
+      },
+      {
+        protocol: "https",
+        hostname: "i.ibb.co",
+      },
+      {
+        protocol: "https",
+        hostname: "**.ibb.co",
+      },
+      {
+        protocol: "https",
+        hostname: "imgbb.com",
+      },
+      {
+        protocol: "https",
+        hostname: "**.postimages.org",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+      },
+    ],
+  },
 };
 
 export default nextConfig;
