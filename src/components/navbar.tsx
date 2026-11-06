@@ -69,7 +69,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const navLinks = [
     { label: "Home", path: "/" },
-    { label: "All Books", path: "/books" },
+    { label: "All Books", path: "/all-books" },
     // Private links
     // ...(user
     //   ? [
