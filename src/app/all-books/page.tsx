@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { getBackendBaseUrl } from "@/lib/backend-url";
 
 interface Book {
   _id: string;
@@ -48,25 +49,22 @@ const sortOptions = [
 function AllBooksContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("category");
   const [books, setBooks] = useState<Book[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All Shelves");
+  const [selectedCategory, setSelectedCategory] = useState(() =>
+    categoryParam && categories.includes(categoryParam)
+      ? categoryParam
+      : "All Shelves",
+  );
   const [sortBy, setSortBy] = useState("newest");
   const [loading, setLoading] = useState(true);
-
-  // Initialize category from URL search params
-  useEffect(() => {
-    const categoryParam = searchParams.get("category");
-    if (categoryParam && categories.includes(categoryParam)) {
-      setSelectedCategory(categoryParam);
-    }
-  }, [searchParams]);
 
   // Fetch books from backend API on mount
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const baseUrl = process.env.BACKEND_BASE_URL || "http://localhost:8000";
+        const baseUrl = getBackendBaseUrl();
         const res = await fetch(`${baseUrl}/all-books`);
 
         if (!res.ok) {

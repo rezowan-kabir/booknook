@@ -219,7 +219,7 @@ const BorrowBookModal = ({ book, user = null }) => {
 
                 <p className="text-[11px] leading-relaxed text-stone-600">
                   By confirming, 1 copy will be deducted from library inventory.
-                  You can return it at any time in "My Borrows".
+                  You can return it at any time in &quot;My Borrows&quot;.
                 </p>
               </div>
 

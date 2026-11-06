@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
+import { getBackendBaseUrl } from "@/lib/backend-url";
 
 const categories = ["Fiction", "Science", "History", "Kids", "Other"];
 
@@ -81,7 +82,7 @@ export default function AddBookPage() {
     }
   };
 
-  const handleSubmit =  async(e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const bookData = {
       title,
@@ -95,19 +96,28 @@ export default function AddBookPage() {
         email: userEmail,
       },
     };
-    const res = await fetch(`${process.env.BACKEND_BASE_URL}/add-book`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(bookData),
-    });
-     const data = await res.json()
-     console.log(data)
+    try {
+      const res = await fetch(`${getBackendBaseUrl()}/add-book`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bookData),
+      });
 
-    // console.log("Submitted Book Data:", bookData);
-    toast.success("Book successfully added to the collection!");
-    // window.location.reload();
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to add book.");
+      }
+
+      console.log("Book submission response:", data);
+      toast.success("Book successfully added to the collection!");
+    } catch (error) {
+      console.error("Error submitting book:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to add book.",
+      );
+    }
   };
 
   return (
