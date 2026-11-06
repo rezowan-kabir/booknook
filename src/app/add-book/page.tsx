@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
-import { getBackendBaseUrl } from "@/lib/backend-url";
 
 const categories = ["Fiction", "Science", "History", "Kids", "Other"];
 
@@ -97,7 +96,17 @@ export default function AddBookPage() {
       },
     };
     try {
-      const res = await fetch(`${getBackendBaseUrl()}/add-book`, {
+      const backendBaseUrl =
+        process.env.NEXT_PUBLIC_BACKEND_BASE_URL ||
+        (process.env.NODE_ENV === "development"
+          ? "http://localhost:8000"
+          : undefined);
+
+      if (!backendBaseUrl) {
+        throw new Error("NEXT_PUBLIC_BACKEND_BASE_URL is not configured.");
+      }
+
+      const res = await fetch(`${backendBaseUrl.replace(/\/+$/, "")}/add-book`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

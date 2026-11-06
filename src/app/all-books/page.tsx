@@ -63,9 +63,18 @@ function AllBooksContent() {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        
+        const backendBaseUrl =
+          process.env.NEXT_PUBLIC_BACKEND_BASE_URL ||
+          (process.env.NODE_ENV === "development"
+            ? "http://localhost:8000"
+            : undefined);
+
+        if (!backendBaseUrl) {
+          throw new Error("NEXT_PUBLIC_BACKEND_BASE_URL is not configured.");
+        }
+
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/all-books`,
+          `${backendBaseUrl.replace(/\/+$/, "")}/all-books`,
         );
 
         if (!res.ok) {
