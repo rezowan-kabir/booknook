@@ -13,7 +13,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { getBackendBaseUrl } from "@/lib/backend-url";
 
 interface Book {
   _id: string;
@@ -64,8 +63,10 @@ function AllBooksContent() {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const baseUrl = getBackendBaseUrl();
-        const res = await fetch(`${baseUrl}/all-books`);
+        
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/all-books`,
+        );
 
         if (!res.ok) {
           throw new Error("Failed to fetch books");
