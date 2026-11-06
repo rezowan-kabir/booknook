@@ -51,7 +51,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ onBrowse }) => {
   const swiperRef = useRef<SwiperType | null>(null);
 
   return (
-    <div className="relative w-full overflow-hidden rounded-2xl md:rounded-3xl shadow-xl bg-stone-900 border border-stone-200/40 dark:border-stone-800">
+    <div className="relative w-full overflow-hidden rounded-sm shadow-xl bg-stone-900 border border-stone-200/40 dark:border-stone-800">
       {/* Swiper */}
       <Swiper
         modules={[Autoplay, EffectFade]}
@@ -103,7 +103,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ onBrowse }) => {
                 <div className="flex flex-col sm:flex-row sm:items-center gap-5 pt-2">
                   <button
                     onClick={onBrowse}
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-medium text-sm transition-all shadow-lg hover:shadow-amber-600/30 group whitespace-nowrap shrink-0 focus-visible:outline-none"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-sm bg-amber-600 hover:bg-amber-500 text-white font-medium text-sm transition-all shadow-lg hover:shadow-amber-600/30 group whitespace-nowrap shrink-0 focus-visible:outline-none"
                   >
                     <BookOpen className="w-4 h-4" />
 
@@ -122,7 +122,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ onBrowse }) => {
       <div className="absolute bottom-6 right-6 z-20 flex items-center gap-2">
         <button
           onClick={() => swiperRef.current?.slidePrev()}
-          className="p-2.5 rounded-full bg-stone-900/60 hover:bg-stone-900/90 text-white border border-stone-700/60 backdrop-blur-md transition-all focus-visible:outline-none"
+          className="p-2.5 rounded-sm bg-stone-900/60 hover:bg-stone-900/90 text-white border border-stone-700/60 backdrop-blur-md transition-all focus-visible:outline-none"
           aria-label="Previous slide"
         >
           <ChevronLeft className="w-4 h-4" />
@@ -130,7 +130,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ onBrowse }) => {
 
         <button
           onClick={() => swiperRef.current?.slideNext()}
-          className="p-2.5 rounded-full bg-stone-900/60 hover:bg-stone-900/90 text-white border border-stone-700/60 backdrop-blur-md transition-all focus-visible:outline-none"
+          className="p-2.5 rounded-sm bg-stone-900/60 hover:bg-stone-900/90 text-white border border-stone-700/60 backdrop-blur-md transition-all focus-visible:outline-none"
           aria-label="Next slide"
         >
           <ChevronRight className="w-4 h-4" />

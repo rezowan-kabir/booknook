@@ -230,13 +230,13 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="flex items-center gap-2">
               <button
                 onClick={() => navigate("/login")}
-                className="px-3.5 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 hover:text-stone-900 dark:hover:text-stone-100 rounded-lg hover:bg-stone-200/50 dark:hover:bg-stone-800 transition-colors whitespace-nowrap"
+                className="px-3.5 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 hover:text-stone-900 dark:hover:text-stone-100 rounded-sm hover:bg-stone-200/50 dark:hover:bg-stone-800 transition-colors whitespace-nowrap"
               >
                 Login
               </button>
               <button
                 onClick={() => navigate("/register")}
-                className="px-4 py-1.5 text-sm font-medium text-white bg-amber-800 hover:bg-amber-900 dark:bg-amber-600 dark:hover:bg-amber-700 rounded-lg shadow-sm transition-colors whitespace-nowrap"
+                className="px-4 py-1.5 text-sm font-medium text-white bg-amber-800 hover:bg-amber-900 dark:bg-amber-600 dark:hover:bg-amber-700 rounded-sm shadow-sm transition-colors whitespace-nowrap"
               >
                 Register
               </button>

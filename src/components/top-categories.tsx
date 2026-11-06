@@ -9,7 +9,7 @@ import {
   Smile,
   Layers,
   BookOpen,
-  ArrowUpRight,
+  ArrowRight,
 } from "lucide-react";
 
 interface Category {
@@ -18,85 +18,54 @@ interface Category {
   icon: React.ReactNode;
   volumeCount: number;
   description: string;
-  bgClass: string;
-  iconBgClass: string;
-  titleClass: string;
-  textClass: string;
-  linkClass: string;
 }
 
 const categories: Category[] = [
   {
     id: "fiction",
     name: "Fiction",
-    icon: <Feather className="w-5 h-5" />,
+    icon: <Feather className="w-4 h-4 text-stone-600 dark:text-stone-400" />,
     volumeCount: 2,
-    description: "Immersive literary novels, coastal mysteries, character-driven dramas,…",
-    bgClass: "bg-amber-50/80 dark:bg-amber-950/20",
-    iconBgClass: "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400",
-    titleClass: "text-amber-950 dark:text-amber-100",
-    textClass: "text-stone-600 dark:text-stone-400",
-    linkClass: "text-amber-700 dark:text-amber-400",
+    description:
+      "Immersive literary novels, coastal mysteries, and character-driven dramas.",
   },
   {
     id: "science",
     name: "Science",
-    icon: <Atom className="w-5 h-5" />,
+    icon: <Atom className="w-4 h-4 text-stone-600 dark:text-stone-400" />,
     volumeCount: 2,
-    description: "Quantum physics, cosmology, astrophysics, robotics, biomimicry,…",
-    bgClass: "bg-blue-50/80 dark:bg-blue-950/20",
-    iconBgClass: "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400",
-    titleClass: "text-blue-950 dark:text-blue-100",
-    textClass: "text-stone-600 dark:text-stone-400",
-    linkClass: "text-blue-700 dark:text-blue-400",
+    description:
+      "Quantum physics, cosmology, astrophysics, robotics, and biomimicry.",
   },
   {
     id: "history",
     name: "History",
-    icon: <Landmark className="w-5 h-5" />,
+    icon: <Landmark className="w-4 h-4 text-stone-600 dark:text-stone-400" />,
     volumeCount: 1,
-    description: "Ancient civilizations, maritime empires, classic diplomacy,…",
-    bgClass: "bg-stone-100/80 dark:bg-stone-800/40",
-    iconBgClass: "bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300",
-    titleClass: "text-stone-900 dark:text-stone-100",
-    textClass: "text-stone-600 dark:text-stone-400",
-    linkClass: "text-stone-700 dark:text-stone-300",
+    description:
+      "Ancient civilizations, maritime empires, and classic diplomacy.",
   },
   {
     id: "kids",
     name: "Kids",
-    icon: <Smile className="w-5 h-5" />,
+    icon: <Smile className="w-4 h-4 text-stone-600 dark:text-stone-400" />,
     volumeCount: 2,
-    description: "Colorful picture books, early readers, and magical adventures…",
-    bgClass: "bg-emerald-50/80 dark:bg-emerald-950/20",
-    iconBgClass: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400",
-    titleClass: "text-emerald-950 dark:text-emerald-100",
-    textClass: "text-stone-600 dark:text-stone-400",
-    linkClass: "text-emerald-700 dark:text-emerald-400",
+    description:
+      "Colorful picture books, early readers, and magical adventures.",
   },
   {
     id: "other",
     name: "Other",
-    icon: <Layers className="w-5 h-5" />,
+    icon: <Layers className="w-4 h-4 text-stone-600 dark:text-stone-400" />,
     volumeCount: 1,
-    description: "Art, philosophy, travel essays, poetry, and rare finds…",
-    bgClass: "bg-purple-50/80 dark:bg-purple-950/20",
-    iconBgClass: "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400",
-    titleClass: "text-purple-950 dark:text-purple-100",
-    textClass: "text-stone-600 dark:text-stone-400",
-    linkClass: "text-purple-700 dark:text-purple-400",
+    description: "Art, philosophy, travel essays, poetry, and rare finds.",
   },
   {
     id: "all",
     name: "All Collections",
-    icon: <BookOpen className="w-5 h-5" />,
+    icon: <BookOpen className="w-4 h-4 text-amber-800 dark:text-amber-400" />,
     volumeCount: 0,
-    description: "Browse every title across all shelves in one unified view…",
-    bgClass: "bg-amber-800 dark:bg-amber-900/60",
-    iconBgClass: "bg-amber-700 dark:bg-amber-600 text-white",
-    titleClass: "text-white",
-    textClass: "text-amber-100/80",
-    linkClass: "text-white",
+    description: "Browse every title across all shelves in one unified view.",
   },
 ];
 
@@ -106,74 +75,84 @@ interface TopCategoriesProps {
 
 export const TopCategories: React.FC<TopCategoriesProps> = ({ onBrowse }) => {
   return (
-    <section>
+    <section className="py-12">
       {/* Header */}
-      <div className="mb-8">
-        <div className="inline-flex items-center gap-2 text-amber-700 dark:text-amber-400 mb-3">
-          <Compass className="w-4 h-4" />
-          <span className="text-xs font-semibold tracking-widest uppercase">
-            Explore Curated Genres
-          </span>
-        </div>
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
-          <div>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-stone-900 dark:text-stone-100 mb-2">
-              Top Categories
-            </h2>
-            <p className="text-sm text-stone-600 dark:text-stone-400">
-              Dive into our main library collections. Click any category to
-              browse cataloged books immediately.
-            </p>
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div>
+          <div className="flex items-center gap-2 text-stone-500 dark:text-stone-400 mb-2">
+            <Compass className="w-4 h-4" />
+            <span className="text-xs font-medium tracking-wider uppercase">
+              Explore Curated Genres
+            </span>
           </div>
-          <button
-            onClick={() => onBrowse?.("all")}
-            className="text-sm font-medium text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 transition-colors shrink-0 flex items-center gap-1"
-          >
-            View All Shelves
-            <ArrowUpRight className="w-4 h-4" />
-          </button>
+          <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-stone-900 dark:text-stone-100">
+            Top Categories
+          </h2>
         </div>
+        <button
+          onClick={() => onBrowse?.("all")}
+          className="text-xs font-medium text-stone-700 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white transition-colors flex items-center gap-1.5 self-start md:self-auto group"
+        >
+          View All Shelves
+          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+        </button>
       </div>
 
-      {/* Divider */}
-      <div className="border-b border-stone-200 dark:border-stone-800 mb-8" />
-
       {/* Category Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {categories.map((category) => (
-          <button
-            key={category.id}
-            onClick={() => onBrowse?.(category.id)}
-            className={`${category.bgClass} rounded-2xl p-6 text-left border border-stone-200/50 dark:border-stone-700/50 hover:shadow-md transition-all group`}
-          >
-            <div className="flex items-start justify-between mb-5">
-              <div
-                className={`w-12 h-12 rounded-xl flex items-center justify-center ${category.iconBgClass}`}
-              >
-                {category.icon}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {categories.map((category) => {
+          const isAll = category.id === "all";
+
+          return (
+            <button
+              key={category.id}
+              onClick={() => onBrowse?.(category.id)}
+              className={`group relative p-5 text-left rounded-lg transition-all duration-200 ${
+                isAll
+                  ? "bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-900/40 hover:bg-amber-50 dark:hover:bg-amber-950/30 hover:border-amber-300 dark:hover:border-amber-800"
+                  : "bg-stone-50/50 dark:bg-stone-900/50 hover:bg-white dark:hover:bg-stone-900 border border-stone-200/80 dark:border-stone-800 hover:shadow-sm"
+              }`}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <div
+                  className={`w-8 h-8 rounded-md flex items-center justify-center ${
+                    isAll
+                      ? "bg-amber-100/80 dark:bg-amber-900/40"
+                      : "bg-stone-200/60 dark:bg-stone-800"
+                  }`}
+                >
+                  {category.icon}
+                </div>
+                {category.volumeCount > 0 && (
+                  <span className="text-xs text-stone-400 dark:text-stone-500 font-medium">
+                    {category.volumeCount}{" "}
+                    {category.volumeCount > 1 ? "Volumes" : "Volume"}
+                  </span>
+                )}
               </div>
-              {category.volumeCount > 0 && (
-                <span className={`text-sm ${category.textClass}`}>
-                  {category.volumeCount} Volume{category.volumeCount > 1 ? "s" : ""}
-                </span>
-              )}
-            </div>
-            <h3
-              className={`font-serif text-xl font-semibold ${category.titleClass} mb-2`}
-            >
-              {category.name}
-            </h3>
-            <p className={`text-sm ${category.textClass} leading-relaxed mb-5 line-clamp-2`}>
-              {category.description}
-            </p>
-            <div
-              className={`inline-flex items-center gap-1 text-sm font-medium ${category.linkClass} group-hover:gap-2 transition-all`}
-            >
-              Browse {category.name}
-              <ArrowUpRight className="w-4 h-4" />
-            </div>
-          </button>
-        ))}
+
+              <h3
+                className={`font-serif text-lg font-medium mb-1 transition-colors ${
+                  isAll
+                    ? "text-amber-950 dark:text-amber-200 group-hover:text-amber-900 dark:group-hover:text-amber-100"
+                    : "text-stone-900 dark:text-stone-100 group-hover:text-amber-700 dark:group-hover:text-amber-400"
+                }`}
+              >
+                {category.name}
+              </h3>
+
+              <p
+                className={`text-xs leading-relaxed line-clamp-2 ${
+                  isAll
+                    ? "text-amber-900/70 dark:text-amber-300/80"
+                    : "text-stone-500 dark:text-stone-400"
+                }`}
+              >
+                {category.description}
+              </p>
+            </button>
+          );
+        })}
       </div>
     </section>
   );
