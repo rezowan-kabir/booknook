@@ -71,13 +71,13 @@ export const Navbar: React.FC<NavbarProps> = ({
     { label: "Home", path: "/" },
     { label: "All Books", path: "/books" },
     // Private links
-    ...(user
-      ? [
+    // ...(user
+    //   ? [
           { label: "Add Book", path: "/add-book", icon: PlusCircle },
           { label: "My Books", path: "/my-books", icon: Library },
           { label: "My Borrows", path: "/my-borrows", icon: BookMarked },
-        ]
-      : []),
+      //   ]
+      // : []),
   ];
 
   return (
