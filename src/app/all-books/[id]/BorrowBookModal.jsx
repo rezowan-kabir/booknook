@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { Bookmark, X, ShieldCheck } from "lucide-react";
+import { toast } from "sonner"; // Sonner import করা হয়েছে
 
 const BorrowBookModal = ({ book, user = null }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,7 +32,7 @@ const BorrowBookModal = ({ book, user = null }) => {
     e.preventDefault();
 
     if (!book.availableCopies) {
-      alert("Sorry! No copies are currently available.");
+      toast.error("Sorry! No copies are currently available."); // অ্যালার্টের বদলে Sonner error toast
       return;
     }
 
@@ -63,12 +64,15 @@ const BorrowBookModal = ({ book, user = null }) => {
 
       // if (!res.ok) throw new Error("Borrow failed");
 
-      alert("Borrow request submitted successfully!");
+      // সাকসেস টোস্ট
+      toast.success("Borrow request submitted successfully!", {
+        description: `Due date: ${returnDate}`,
+      });
 
       setIsOpen(false);
     } catch (error) {
       console.error(error);
-      alert("Something went wrong!");
+      toast.error("Something went wrong!"); // এরর টোস্ট
     } finally {
       setLoading(false);
     }
@@ -81,9 +85,9 @@ const BorrowBookModal = ({ book, user = null }) => {
       <button
         onClick={() => setIsOpen(true)}
         disabled={!book.availableCopies}
-        className="flex-1 flex items-center justify-center gap-2 bg-amber-800 text-white rounded-lg px-6 py-3 text-sm font-semibold hover:bg-amber-900 transition disabled:opacity-50"
+        className="flex-1 flex items-center justify-center gap-2 bg-stone-900 text-stone-100 rounded-sm px-6 py-3 text-xs uppercase tracking-wider font-medium hover:bg-stone-800 transition-colors disabled:opacity-50"
       >
-        <Bookmark size={16} />
+        <Bookmark size={14} />
         {book.availableCopies ? "Borrow This Book" : "Currently Unavailable"}
       </button>
 
@@ -95,32 +99,32 @@ const BorrowBookModal = ({ book, user = null }) => {
 
           <div
             onClick={() => setIsOpen(false)}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-stone-900/50 backdrop-blur-[2px]"
           />
 
           {/* Modal Content */}
 
-          <div className="relative bg-white w-full max-w-md rounded-xl shadow-2xl p-5 sm:p-6">
+          <div className="relative bg-white w-full max-w-md rounded-md shadow-xl border border-stone-200 p-6 sm:p-7">
             {/* Header */}
 
-            <div className="flex items-center justify-between border-b border-gray-100 pb-4">
-              <h2 className="flex items-center gap-2 font-serif font-bold text-lg text-gray-900">
-                <Bookmark size={19} className="text-amber-800" />
-                Borrow This Book
+            <div className="flex items-center justify-between border-b border-stone-200 pb-4">
+              <h2 className="flex items-center gap-2 font-serif font-medium text-base text-stone-900">
+                <Bookmark size={17} className="text-amber-800" />
+                Borrow This Volume
               </h2>
 
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-gray-400 hover:text-gray-900"
+                className="text-stone-400 hover:text-stone-900 transition-colors"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
 
             {/* Book Information */}
 
-            <div className="mt-4 flex items-center gap-3 border border-amber-100 bg-[#FFFEFA] rounded-xl p-3">
-              <div className="relative w-10 h-14 rounded overflow-hidden shrink-0">
+            <div className="mt-5 flex items-center gap-3.5 border border-stone-200 bg-stone-50/60 rounded-sm p-3">
+              <div className="relative w-10 h-14 rounded-none overflow-hidden shrink-0 border border-stone-300 shadow-sm">
                 <Image
                   src={book.imageUrl}
                   alt={book.title}
@@ -131,13 +135,15 @@ const BorrowBookModal = ({ book, user = null }) => {
               </div>
 
               <div className="min-w-0">
-                <h3 className="font-serif font-semibold text-sm">
+                <h3 className="font-serif font-medium text-xs text-stone-900 truncate">
                   {book.title}
                 </h3>
 
-                <p className="text-xs text-gray-500">By {book.author}</p>
+                <p className="text-[11px] text-stone-500 font-serif italic">
+                  by {book.author}
+                </p>
 
-                <p className="text-xs text-amber-800 mt-1">
+                <p className="text-[11px] text-amber-800 mt-1 font-medium">
                   Available Copies: {book.availableCopies} of {book.totalCopies}
                 </p>
               </div>
@@ -145,11 +151,11 @@ const BorrowBookModal = ({ book, user = null }) => {
 
             {/* Borrow Form */}
 
-            <form onSubmit={handleBorrow} className="mt-4 space-y-4">
+            <form onSubmit={handleBorrow} className="mt-5 space-y-4">
               {/* Borrower Name */}
 
               <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">
+                <label className="block text-[11px] font-semibold text-stone-500 uppercase tracking-wider mb-1">
                   Borrower Name
                 </label>
 
@@ -159,14 +165,14 @@ const BorrowBookModal = ({ book, user = null }) => {
                   onChange={(e) => setBorrowerName(e.target.value)}
                   readOnly={!!user}
                   required
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-gray-50 outline-none focus:border-amber-700 read-only:cursor-not-allowed"
+                  className="w-full border border-stone-300 rounded-sm px-3 py-2 text-xs bg-stone-50/50 text-stone-800 outline-none focus:border-stone-800 read-only:cursor-not-allowed"
                 />
               </div>
 
               {/* Borrower Email */}
 
               <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">
+                <label className="block text-[11px] font-semibold text-stone-500 uppercase tracking-wider mb-1">
                   Borrower Email
                 </label>
 
@@ -176,19 +182,19 @@ const BorrowBookModal = ({ book, user = null }) => {
                   onChange={(e) => setBorrowerEmail(e.target.value)}
                   readOnly={!!user}
                   required
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-gray-50 outline-none focus:border-amber-700 read-only:cursor-not-allowed"
+                  className="w-full border border-stone-300 rounded-sm px-3 py-2 text-xs bg-stone-50/50 text-stone-800 outline-none focus:border-stone-800 read-only:cursor-not-allowed"
                 />
               </div>
 
               {/* Return Date */}
 
               <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-semibold text-gray-500 uppercase">
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-[11px] font-semibold text-stone-500 uppercase tracking-wider">
                     Return Due Date
                   </label>
 
-                  <span className="text-xs text-gray-400">
+                  <span className="text-[11px] text-stone-400 font-serif italic">
                     (standard 14 days)
                   </span>
                 </div>
@@ -199,19 +205,19 @@ const BorrowBookModal = ({ book, user = null }) => {
                   min={new Date().toLocaleDateString("en-CA")}
                   onChange={(e) => setReturnDate(e.target.value)}
                   required
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-amber-700"
+                  className="w-full border border-stone-300 rounded-sm px-3 py-2 text-xs text-stone-800 outline-none focus:border-stone-800 bg-white"
                 />
               </div>
 
-           {/* Information */}
+              {/* Information */}
 
-              <div className="bg-gray-50 rounded-lg p-3 flex items-start gap-2">
+              <div className="bg-amber-50/50 border border-amber-200/60 rounded-sm p-3 flex items-start gap-2.5">
                 <ShieldCheck
                   size={15}
-                  className="text-emerald-600 mt-0.5 shrink-0"
+                  className="text-amber-800 mt-0.5 shrink-0"
                 />
 
-                <p className="text-[11px] leading-5 text-gray-500">
+                <p className="text-[11px] leading-relaxed text-stone-600">
                   By confirming, 1 copy will be deducted from library inventory.
                   You can return it at any time in "My Borrows".
                 </p>
@@ -219,11 +225,11 @@ const BorrowBookModal = ({ book, user = null }) => {
 
               {/* Actions */}
 
-              <div className="flex justify-end items-center gap-3 pt-1">
+              <div className="flex justify-end items-center gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="text-sm text-gray-500 hover:text-gray-900 px-3 py-2"
+                  className="text-xs uppercase tracking-wider text-stone-500 hover:text-stone-900 px-3 py-2 transition-colors font-medium"
                 >
                   Cancel
                 </button>
@@ -231,7 +237,7 @@ const BorrowBookModal = ({ book, user = null }) => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="bg-amber-800 text-white text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-amber-900 transition disabled:opacity-50"
+                  className="bg-amber-800 text-stone-100 text-xs uppercase tracking-wider font-medium px-5 py-2.5 rounded-sm hover:bg-amber-900 transition-colors disabled:opacity-50"
                 >
                   {loading ? "Processing..." : "Confirm Borrow"}
                 </button>

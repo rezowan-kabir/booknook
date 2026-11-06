@@ -89,7 +89,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           className="flex items-center gap-2.5 text-stone-900 dark:text-stone-100 group shrink-0 focus-visible:outline-none"
         >
           <Image
-            src="/assets/logo1.png"
+            src="/assets/logo.png"
             alt="BookNook logo"
             width={40}
             height={40}

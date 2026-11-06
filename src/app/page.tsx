@@ -1,19 +1,17 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-import { HeroSlider } from "@/components/banner";
-import { TopCategories } from "@/components/top-categories";
+import NewArrivals from "@/components/new-arrivals";
+import { HomeHero, HomeTopCategories } from "@/components/home-navigation";
 import { BorrowingSteps } from "@/components/borrowing-steps";
 import { ReaderReviews } from "@/components/reader-reviews";
 
 export default function Home() {
-  const router = useRouter();
-
   return (
     <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <HeroSlider onBrowse={() => router.push("/books")} />
+      <HomeHero />
       <div className="mt-16">
-        <TopCategories onBrowse={(category) => router.push("/books")} />
+        <NewArrivals />
+      </div>
+      <div className="mt-16">
+        <HomeTopCategories />
       </div>
       <div className="mt-16">
         <BorrowingSteps />

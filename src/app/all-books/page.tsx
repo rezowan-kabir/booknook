@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Search, BookOpen, ArrowUpRight, Check } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -45,13 +45,22 @@ const sortOptions = [
   { value: "available", label: "Most Copies" },
 ];
 
-export default function AllBooksPage() {
+function AllBooksContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [books, setBooks] = useState<Book[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All Shelves");
   const [sortBy, setSortBy] = useState("newest");
   const [loading, setLoading] = useState(true);
+
+  // Initialize category from URL search params
+  useEffect(() => {
+    const categoryParam = searchParams.get("category");
+    if (categoryParam && categories.includes(categoryParam)) {
+      setSelectedCategory(categoryParam);
+    }
+  }, [searchParams]);
 
   // Fetch books from backend API on mount
   useEffect(() => {
@@ -304,7 +313,7 @@ export default function AllBooksPage() {
                     className="inline-flex items-center gap-1 text-xs font-medium text-amber-800 dark:text-amber-400 group-hover:translate-x-0.5 transition-transform"
                     onClick={(e) => {
                       e.stopPropagation();
-                      router.push(`/books/${book._id}`);
+                      router.push(`/all-books/${book._id}`);
                     }}
                   >
                     <span>Details</span>
@@ -317,5 +326,26 @@ export default function AllBooksPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function AllBooksPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {[...Array(6)].map((_, i) => (
+              <div
+                key={i}
+                className="bg-stone-100 dark:bg-stone-800/50 rounded-xl h-[420px] animate-pulse border border-stone-200 dark:border-stone-800"
+              />
+            ))}
+          </div>
+        </div>
+      }
+    >
+      <AllBooksContent />
+    </Suspense>
   );
 }

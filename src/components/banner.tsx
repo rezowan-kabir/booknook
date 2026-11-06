@@ -3,7 +3,7 @@
 import Image from "next/image";
 import React, { useRef } from "react";
 
-import { ChevronLeft, ChevronRight, BookOpen, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade } from "swiper/modules";
@@ -105,7 +105,13 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ onBrowse }) => {
                     onClick={onBrowse}
                     className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-sm bg-amber-600 hover:bg-amber-500 text-white font-medium text-sm transition-all shadow-lg hover:shadow-amber-600/30 group whitespace-nowrap shrink-0 focus-visible:outline-none"
                   >
-                    <BookOpen className="w-4 h-4" />
+                    <Image
+                      src="/assets/logo.png"
+                      alt=""
+                      width={20}
+                      height={20}
+                      className="h-5 w-5 object-contain"
+                    />
 
                     <span>Browse Books</span>
 

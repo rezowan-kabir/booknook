@@ -36,7 +36,7 @@ export const Footer: React.FC<FooterProps> = ({ navigate: navigateProp }) => {
           <div className="space-y-4">
             <div className="flex items-center gap-2.5">
               <Image
-                          src="/assets/logo1.png"
+                          src="/assets/logo.png"
                           alt="BookNook logo"
                           width={40}
                           height={40}

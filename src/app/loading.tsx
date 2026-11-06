@@ -9,7 +9,7 @@ export default function Loading() {
       <div className="flex flex-col items-center gap-4">
         <div className="relative">
           <Image
-                      src="/assets/logo1.png"
+                      src="/assets/logo.png"
                       alt="BookNook logo"
                       width={40}
                       height={40}
