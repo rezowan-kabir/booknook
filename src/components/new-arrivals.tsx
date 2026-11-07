@@ -64,7 +64,7 @@ const NewArrivals = async () => {
             New Arrivals
           </h2>
           <p className="mt-2 text-sm text-stone-500 dark:text-stone-400">
-            Discover the latest additions to our community of bibliophiles.
+            
           </p>
         </div>
         <Link
@@ -79,7 +79,7 @@ const NewArrivals = async () => {
       <div className="mb-8 border-b border-stone-200 dark:border-stone-800" />
 
       {books === null ? (
-        <div className="rounded-xl border border-dashed border-stone-300 py-12 text-center dark:border-stone-700">
+        <div className="rounded-md border border-dashed border-stone-300 py-12 text-center dark:border-stone-700">
           <BookOpen className="mx-auto mb-3 h-8 w-8 text-stone-300 dark:text-stone-600" />
           <p className="text-sm font-medium text-stone-600 dark:text-stone-300">
             New arrivals are temporarily unavailable.
@@ -103,7 +103,7 @@ const NewArrivals = async () => {
                 <Link
                   key={book._id}
                   href={`/all-books/${book._id}`}
-                  className="group flex flex-col overflow-hidden rounded-xl border border-stone-200/80 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:border-stone-800 dark:bg-stone-900/60"
+                  className="group flex flex-col overflow-hidden rounded-md border border-stone-200/80 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:border-stone-800 dark:bg-stone-900/60"
                 >
                   <article className="flex h-full flex-col">
                   {/* Cover */}
@@ -161,7 +161,7 @@ const NewArrivals = async () => {
                           {book.author}
                         </span>
                       </div>
-                      <span className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-stone-200 bg-white px-3 py-1.5 text-[11px] font-medium text-amber-800 transition-colors group-hover:bg-stone-50 dark:border-stone-700 dark:bg-stone-900 dark:text-amber-400 dark:group-hover:bg-stone-800">
+                      <span className="inline-flex shrink-0 items-center gap-1.5 rounded-sm border border-stone-200 bg-white px-3 py-1.5 text-[11px] font-medium text-amber-800 transition-colors group-hover:bg-stone-50 dark:border-stone-700 dark:bg-stone-900 dark:text-amber-400 dark:group-hover:bg-stone-800">
                         <BookOpen className="h-3 w-3" />
                         View Details
                       </span>
@@ -177,7 +177,7 @@ const NewArrivals = async () => {
           <div className="mt-10 flex justify-center">
             <Link
               href="/all-books"
-              className="inline-flex items-center gap-2 rounded-md bg-amber-800 px-6 py-3 text-xs font-medium uppercase tracking-wider text-white transition-colors hover:bg-amber-900"
+              className="inline-flex items-center gap-2 rounded-sm bg-amber-800 px-6 py-3 text-xs font-medium uppercase tracking-wider text-white transition-colors hover:bg-amber-900"
             >
               <Image
                 src="/assets/logo.png"

@@ -143,7 +143,7 @@ const MyBorrowsList = ({
           </h2>
         </div>
         {activeRows.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-stone-200 bg-white/60 px-6 py-14 text-center dark:border-stone-800 dark:bg-stone-900/20">
+          <div className="rounded-md border border-dashed border-stone-200 bg-white/60 px-6 py-14 text-center dark:border-stone-800 dark:bg-stone-900/20">
             <p className="mb-1 text-sm font-medium text-stone-700 dark:text-stone-300">
               No books checked out
             </p>
@@ -152,14 +152,14 @@ const MyBorrowsList = ({
             </p>
             <Link
               href="/all-books"
-              className="mt-5 inline-flex items-center gap-2 rounded-md bg-amber-800 px-4 py-2.5 text-xs font-medium text-stone-100 transition-colors hover:bg-amber-900"
+              className="mt-5 inline-flex items-center gap-2 rounded-sm bg-amber-800 px-4 py-2.5 text-xs font-medium text-stone-100 transition-colors hover:bg-amber-900"
             >
               <BookOpen className="h-3.5 w-3.5" />
               Browse All Books
             </Link>
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-stone-200 bg-white shadow-sm dark:border-stone-800 dark:bg-stone-900/60">
+          <div className="overflow-x-auto rounded-md border border-stone-200 bg-white shadow-sm dark:border-stone-800 dark:bg-stone-900/60">
             <table className="w-full min-w-[760px] text-left">
               <thead>
                 <tr className="border-b border-stone-200 bg-stone-50/60 dark:border-stone-800 dark:bg-stone-900/40">
@@ -199,7 +199,7 @@ const MyBorrowsList = ({
                       <button
                         onClick={() => handleReturn(record._id)}
                         disabled={returningId === record._id}
-                        className="inline-flex items-center gap-2 rounded-md bg-amber-800 px-4 py-2.5 text-xs font-medium text-stone-100 transition-colors hover:bg-amber-900 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-amber-700 dark:hover:bg-amber-600"
+                        className="inline-flex items-center gap-2 rounded-sm bg-amber-800 px-4 py-2.5 text-xs font-medium text-stone-100 transition-colors hover:bg-amber-900 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-amber-700 dark:hover:bg-amber-600"
                       >
                         {returningId === record._id ? (
                           <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -228,7 +228,7 @@ const MyBorrowsList = ({
               Returned Volumes Archive ({returned.length})
             </h2>
           </div>
-          <div className="overflow-x-auto rounded-xl border border-stone-200 bg-white shadow-sm dark:border-stone-800 dark:bg-stone-900/60">
+          <div className="overflow-x-auto rounded-md border border-stone-200 bg-white shadow-sm dark:border-stone-800 dark:bg-stone-900/60">
             <table className="w-full min-w-[640px] text-left">
               <thead>
                 <tr className="border-b border-stone-200 bg-stone-50/60 dark:border-stone-800 dark:bg-stone-900/40">

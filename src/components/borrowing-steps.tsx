@@ -32,7 +32,7 @@ const steps: Step[] = [
 
 export const BorrowingSteps: React.FC = () => {
   return (
-    <section className="bg-amber-50/60 dark:bg-stone-900/40 rounded-xl px-6 sm:px-10 lg:px-14 py-12 lg:py-16 border border-amber-100/60 dark:border-stone-800">
+    <section className="bg-amber-50/60 dark:bg-stone-900/40 rounded-md px-6 sm:px-10 lg:px-14 py-12 lg:py-16 border border-amber-100/60 dark:border-stone-800">
       {/* Header */}
       <div className="max-w-2xl mb-12">
         <div className="inline-flex items-center gap-2 text-amber-800 dark:text-amber-400 mb-2">

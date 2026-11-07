@@ -120,7 +120,7 @@ const BorrowBookModal = ({ book, user = null }) => {
 
           {/* Modal Content */}
 
-          <div className="relative bg-white w-full max-w-md rounded-md shadow-xl border border-stone-200 p-6 sm:p-7">
+          <div className="relative bg-white w-full max-w-md rounded-sm shadow-xl border border-stone-200 p-6 sm:p-7">
             {/* Header */}
 
             <div className="flex items-center justify-between border-b border-stone-200 pb-4">

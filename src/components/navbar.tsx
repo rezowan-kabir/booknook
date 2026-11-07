@@ -123,7 +123,7 @@ export const Navbar = () => {
           {/* Dark / Light Theme Toggle */}
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-lg text-stone-600 dark:text-stone-300 hover:bg-stone-200/60 dark:hover:bg-stone-800 transition-colors"
+            className="p-2 rounded-sm text-stone-600 dark:text-stone-300 hover:bg-stone-200/60 dark:hover:bg-stone-800 transition-colors"
             title="Toggle theme"
           >
             {theme === "light" ? (
@@ -163,7 +163,7 @@ export const Navbar = () => {
 
               {/* Dropdown Menu */}
               {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-56 rounded-md border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-xl py-2 z-50 text-stone-800 dark:text-stone-200">
+                <div className="absolute right-0 mt-2 w-56 rounded-sm border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-xl py-2 z-50 text-stone-800 dark:text-stone-200">
                   <div className="px-4 py-2 border-b border-stone-100 dark:border-stone-800">
                     <p className="text-xs font-semibold text-stone-900 dark:text-stone-100 truncate">
                       {user.name}
@@ -233,7 +233,7 @@ export const Navbar = () => {
           {/* Mobile Menu Hamburger */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-stone-600 dark:text-stone-400 hover:bg-stone-200/60 dark:hover:bg-stone-800"
+            className="md:hidden p-2 rounded-sm text-stone-600 dark:text-stone-400 hover:bg-stone-200/60 dark:hover:bg-stone-800"
           >
             {mobileMenuOpen ? (
               <X className="w-5 h-5" />
@@ -252,7 +252,7 @@ export const Navbar = () => {
               key={link.path}
               href={link.path}
               onClick={() => setMobileMenuOpen(false)}
-              className="block w-full text-left px-3 py-2 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg"
+              className="block w-full text-left px-3 py-2 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-sm"
             >
               {link.label}
             </Link>
@@ -262,14 +262,14 @@ export const Navbar = () => {
               <Link
                 href="/login"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex-1 py-2 text-center text-xs font-medium text-stone-700 dark:text-stone-300 border border-stone-300 dark:border-stone-700 rounded-lg"
+                className="flex-1 py-2 text-center text-xs font-medium text-stone-700 dark:text-stone-300 border border-stone-300 dark:border-stone-700 rounded-sm"
               >
                 Login
               </Link>
               <Link
                 href="/register"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex-1 py-2 text-center text-xs font-medium text-white bg-amber-800 dark:bg-amber-600 rounded-lg"
+                className="flex-1 py-2 text-center text-xs font-medium text-white bg-amber-800 dark:bg-amber-600 rounded-sm"
               >
                 Register
               </Link>

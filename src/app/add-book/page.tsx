@@ -156,7 +156,7 @@ export default function AddBookPage() {
       </div>
 
       {/* Form Card */}
-      <Card className="bg-stone-50/50 dark:bg-stone-900/50 border-stone-200 dark:border-stone-800 rounded-lg">
+      <Card className="bg-stone-50/50 dark:bg-stone-900/50 border-stone-200 dark:border-stone-800 rounded-sm">
         <CardContent className="p-6">
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Title */}
@@ -274,7 +274,7 @@ export default function AddBookPage() {
 
               {uploadMode === "file" ? (
                 <div className="flex items-center gap-3">
-                  <label className="flex-1 flex items-center justify-center gap-2 h-9 px-3 rounded-md border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 text-xs text-stone-700 dark:text-stone-300 cursor-pointer hover:bg-stone-50 dark:hover:bg-stone-700/50 transition-colors">
+                  <label className="flex-1 flex items-center justify-center gap-2 h-9 px-3 rounded-sm border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 text-xs text-stone-700 dark:text-stone-300 cursor-pointer hover:bg-stone-50 dark:hover:bg-stone-700/50 transition-colors">
                     {uploading ? (
                       <>
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -341,7 +341,7 @@ export default function AddBookPage() {
                   htmlFor="userName"
                   className="text-xs font-medium text-stone-500 dark:text-stone-400"
                 >
-                  Contributor Name (Logged In)
+                  Contributor Name
                 </Label>
                 <Input
                   id="userName"
@@ -357,7 +357,7 @@ export default function AddBookPage() {
                   htmlFor="userEmail"
                   className="text-xs font-medium text-stone-500 dark:text-stone-400"
                 >
-                  Contributor Email (Logged In)
+                  Contributor Email
                 </Label>
                 <Input
                   id="userEmail"

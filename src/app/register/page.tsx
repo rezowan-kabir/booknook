@@ -65,7 +65,7 @@ const GoogleIcon = () => (
 );
 
 const inputClassName =
-  "w-full rounded-md border border-stone-300 bg-white py-2.5 pl-9 pr-3 text-sm text-stone-800 outline-none transition placeholder:text-stone-400 focus:border-amber-700 focus:ring-2 focus:ring-amber-700/15 dark:border-stone-700 dark:bg-stone-950/50 dark:text-stone-100";
+  "w-full rounded-sm border border-stone-300 bg-white py-2.5 pl-9 pr-3 text-sm text-stone-800 outline-none transition placeholder:text-stone-400 focus:border-amber-700 focus:ring-2 focus:ring-amber-700/15 dark:border-stone-700 dark:bg-stone-950/50 dark:text-stone-100";
 
 const labelClassName =
   "mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-stone-600 dark:text-stone-400";
@@ -139,9 +139,9 @@ export default function RegisterPage() {
 
   return (
     <div className="flex min-h-[calc(100vh-7rem)] items-center justify-center bg-[#F7F5F0] px-4 py-12 dark:bg-stone-950">
-      <div className="w-full max-w-md rounded-3xl border border-stone-200/70 bg-white p-8 shadow-[0_4px_30px_rgba(0,0,0,0.08)] dark:border-stone-800 dark:bg-stone-900">
+      <div className="w-full max-w-md rounded-lg border border-stone-200/70 bg-white p-8 shadow-[0_4px_30px_rgba(0,0,0,0.08)] dark:border-stone-800 dark:bg-stone-900">
         {/* Icon */}
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-amber-800 text-white dark:bg-amber-700">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-md bg-amber-800 text-white dark:bg-amber-700">
           <UserPlus className="h-6 w-6" />
         </div>
 
@@ -156,7 +156,7 @@ export default function RegisterPage() {
         <button
           type="button"
           onClick={handleGoogleSignUp}
-          className="mt-6 flex w-full items-center justify-center gap-2.5 rounded-md border border-stone-300 bg-white px-4 py-2.5 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50 dark:border-stone-700 dark:bg-stone-950/50 dark:text-stone-200 dark:hover:bg-stone-800"
+          className="mt-6 flex w-full items-center justify-center gap-2.5 rounded-sm border border-stone-300 bg-white px-4 py-2.5 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50 dark:border-stone-700 dark:bg-stone-950/50 dark:text-stone-200 dark:hover:bg-stone-800"
         >
           <GoogleIcon />
           Sign Up with Google
@@ -249,7 +249,7 @@ export default function RegisterPage() {
           </div>
 
           {/* Live password criteria */}
-          <div className="rounded-md border border-stone-200 bg-stone-50 p-3.5 dark:border-stone-800 dark:bg-stone-950/50">
+          <div className="rounded-sm border border-stone-200 bg-stone-50 p-3.5 dark:border-stone-800 dark:bg-stone-950/50">
             <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400">
               Password Criteria
             </p>
@@ -280,7 +280,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={submitting}
-            className="flex w-full items-center justify-center gap-2 rounded-md bg-amber-700 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-70 dark:bg-amber-700 dark:hover:bg-amber-600"
+            className="flex w-full items-center justify-center gap-2 rounded-sm bg-amber-700 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-70 dark:bg-amber-700 dark:hover:bg-amber-600"
           >
             {submitting ? (
               <Loader2 className="h-4 w-4 animate-spin" />

@@ -107,7 +107,7 @@ export const TopCategories: React.FC<TopCategoriesProps> = ({ onBrowse }) => {
             <button
               key={category.id}
               onClick={() => onBrowse?.(category.id)}
-              className={`group relative p-5 text-left rounded-lg transition-all duration-200 ${
+              className={`group relative p-5 text-left rounded-sm transition-all duration-200 ${
                 isAll
                   ? "bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-900/40 hover:bg-amber-50 dark:hover:bg-amber-950/30 hover:border-amber-300 dark:hover:border-amber-800"
                   : "bg-stone-50/50 dark:bg-stone-900/50 hover:bg-white dark:hover:bg-stone-900 border border-stone-200/80 dark:border-stone-800 hover:shadow-sm"
@@ -115,7 +115,7 @@ export const TopCategories: React.FC<TopCategoriesProps> = ({ onBrowse }) => {
             >
               <div className="flex items-center justify-between mb-3">
                 <div
-                  className={`w-8 h-8 rounded-md flex items-center justify-center ${
+                  className={`w-8 h-8 rounded-sm flex items-center justify-center ${
                     isAll
                       ? "bg-amber-100/80 dark:bg-amber-900/40"
                       : "bg-stone-200/60 dark:bg-stone-800"

@@ -16,7 +16,7 @@ export default function Loading() {
                       priority
                       className="h-10 w-10 object-contain transition-transform group-hover:scale-105"
                     />
-          <div className="absolute -inset-2 rounded-2xl border-2 border-amber-300 dark:border-amber-700 animate-spin" />
+          <div className="absolute -inset-2 rounded-lg border-2 border-amber-300 dark:border-amber-700 animate-spin" />
         </div>
         <p className="font-serif text-lg font-semibold text-amber-950 dark:text-amber-100">
           BookNook

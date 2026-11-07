@@ -167,7 +167,7 @@ function AllBooksContent() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by book title, author, or keyword…"
-            className="pl-10 h-10 bg-white dark:bg-stone-900/50 border-stone-200 dark:border-stone-800 text-xs rounded-md shadow-sm"
+            className="pl-10 h-10 bg-white dark:bg-stone-900/50 border-stone-200 dark:border-stone-800 text-xs rounded-sm shadow-sm"
           />
         </div>
 
@@ -182,7 +182,7 @@ function AllBooksContent() {
               if (value !== null) setSortBy(value);
             }}
           >
-            <SelectTrigger className="w-[170px] h-10 bg-white dark:bg-stone-900/50 border-stone-200 dark:border-stone-800 text-xs rounded-md shadow-sm">
+            <SelectTrigger className="w-[170px] h-10 bg-white dark:bg-stone-900/50 border-stone-200 dark:border-stone-800 text-xs rounded-sm shadow-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -223,12 +223,12 @@ function AllBooksContent() {
           {[...Array(6)].map((_, i) => (
             <div
               key={i}
-              className="bg-stone-100 dark:bg-stone-800/50 rounded-xl h-[420px] animate-pulse border border-stone-200 dark:border-stone-800"
+              className="bg-stone-100 dark:bg-stone-800/50 rounded-sm h-[420px] animate-pulse border border-stone-200 dark:border-stone-800"
             />
           ))}
         </div>
       ) : filteredBooks.length === 0 ? (
-        <div className="text-center py-20 bg-stone-50/50 dark:bg-stone-900/20 rounded-xl border border-dashed border-stone-200 dark:border-stone-800">
+        <div className="text-center py-20 bg-stone-50/50 dark:bg-stone-900/20 rounded-sm border border-dashed border-stone-200 dark:border-stone-800">
           <BookOpen className="w-10 h-10 mx-auto text-stone-400 mb-3" />
           <p className="text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">
             No books found
@@ -242,7 +242,7 @@ function AllBooksContent() {
           {filteredBooks.map((book) => (
             <Card
               key={book._id}
-              className="group overflow-hidden bg-white dark:bg-stone-900/60 border-stone-200/80 dark:border-stone-800 hover:border-stone-300 dark:hover:border-stone-700 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer rounded-xl flex flex-col"
+              className="group overflow-hidden bg-white dark:bg-stone-900/60 border-stone-200/80 dark:border-stone-800 hover:border-stone-300 dark:hover:border-stone-700 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer rounded-sm flex flex-col"
               onClick={() => router.push(`/all-books/${book._id}`)}
             >
               {/* Book Cover Container (Editorial Aspect Ratio) */}
@@ -346,7 +346,7 @@ export default function AllBooksPage() {
             {[...Array(6)].map((_, i) => (
               <div
                 key={i}
-                className="bg-stone-100 dark:bg-stone-800/50 rounded-xl h-[420px] animate-pulse border border-stone-200 dark:border-stone-800"
+                className="bg-stone-100 dark:bg-stone-800/50 rounded-sm h-[420px] animate-pulse border border-stone-200 dark:border-stone-800"
               />
             ))}
           </div>

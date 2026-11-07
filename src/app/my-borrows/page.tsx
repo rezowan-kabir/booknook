@@ -75,20 +75,20 @@ export default async function MyBorrowsPage() {
         {/* Divider */}
         <div className="mb-10 border-b border-stone-200 dark:border-stone-800" />
         {!email ? (
-          <div className="rounded-xl border border-dashed border-stone-200 bg-white/60 px-6 py-20 text-center dark:border-stone-800 dark:bg-stone-900/20">
+          <div className="rounded-md border border-dashed border-stone-200 bg-white/60 px-6 py-20 text-center dark:border-stone-800 dark:bg-stone-900/20">
             <BookOpen className="mx-auto mb-3 h-10 w-10 text-stone-400" />
             <p className="mb-1 text-sm font-medium text-stone-700 dark:text-stone-300">
               Sign in to view your borrows
             </p>
             <Link
               href="/login"
-              className="mt-5 inline-flex items-center gap-2 rounded-md bg-amber-800 px-4 py-2.5 text-xs font-medium text-stone-100 transition-colors hover:bg-amber-900"
+              className="mt-5 inline-flex items-center gap-2 rounded-sm bg-amber-800 px-4 py-2.5 text-xs font-medium text-stone-100 transition-colors hover:bg-amber-900"
             >
               Sign In
             </Link>
           </div>
         ) : borrows === null ? (
-          <div className="rounded-xl border border-dashed border-stone-200 bg-white/60 px-6 py-20 text-center dark:border-stone-800 dark:bg-stone-900/20">
+          <div className="rounded-md border border-dashed border-stone-200 bg-white/60 px-6 py-20 text-center dark:border-stone-800 dark:bg-stone-900/20">
             <BookOpen className="mx-auto mb-3 h-10 w-10 text-stone-400" />
             <p className="mb-1 text-sm font-medium text-stone-700 dark:text-stone-300">
               Couldn&apos;t load your borrows
@@ -99,7 +99,7 @@ export default async function MyBorrowsPage() {
             </p>
             <Link
               href="/all-books"
-              className="mt-5 inline-flex items-center gap-2 rounded-md bg-amber-800 px-4 py-2.5 text-xs font-medium text-stone-100 transition-colors hover:bg-amber-900"
+              className="mt-5 inline-flex items-center gap-2 rounded-sm bg-amber-800 px-4 py-2.5 text-xs font-medium text-stone-100 transition-colors hover:bg-amber-900"
             >
               Browse All Books
             </Link>

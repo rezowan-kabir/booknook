@@ -72,7 +72,7 @@ const BookDetailsPage = async ({ params }) => {
         </Link>
 
         {/* Main Card */}
-        <div className="bg-white border border-stone-200/80 rounded-md shadow-sm p-6 md:p-10">
+        <div className="bg-white border border-stone-200/80 rounded-sm shadow-sm p-6 md:p-10">
           <div className="grid grid-cols-1 md:grid-cols-[32%_68%] gap-10">
             {/* Left Section */}
             <div>
