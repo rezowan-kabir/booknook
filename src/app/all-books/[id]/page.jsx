@@ -49,7 +49,9 @@ const BookDetailsPage = async ({ params }) => {
     addedBy,
   } = book;
 
-  const availableCopies = totalCopies;
+  // Counter maintained by the backend ($inc on borrow/return). Older
+  // documents without it fall back to the cataloged count.
+  const availableCopies = book.availableCopies ?? totalCopies;
 
   return (
     <div className="min-h-screen bg-[#F7F5F0] px-4 py-10 text-stone-800 font-sans">
@@ -71,7 +73,9 @@ const BookDetailsPage = async ({ params }) => {
               {/* Book Cover */}
               <div className="relative bg-stone-100 rounded-sm p-6 flex justify-center border border-stone-200">
                 <span className="absolute top-3 right-3 bg-stone-900 text-stone-100 text-[11px] font-medium px-2.5 py-0.5 rounded-none z-10 tracking-wide uppercase">
-                  {availableCopies} Available
+                  {availableCopies > 0
+                    ? `${availableCopies} Available`
+                    : "Not Available"}
                 </span>
 
                 <div className="relative w-full aspect-[3/4] max-w-[200px] shadow-md border border-stone-300">
@@ -170,9 +174,12 @@ const BookDetailsPage = async ({ params }) => {
                     _id,
                     title,
                     author,
+                    category,
+                    description,
                     imageUrl,
                     totalCopies,
                     availableCopies,
+                    addedBy,
                   }}
                 />
 

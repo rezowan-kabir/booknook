@@ -2,11 +2,13 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Bookmark, X, ShieldCheck } from "lucide-react";
 import { toast } from "sonner"; // Sonner import করা হয়েছে
 
 const BorrowBookModal = ({ book, user = null }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
 
   const getDefaultDate = () => {
     const date = new Date();
@@ -41,38 +43,56 @@ const BorrowBookModal = ({ book, user = null }) => {
 
       const borrowData = {
         bookId: book._id,
+        bookDetails: {
+          _id: book._id,
+          title: book.title,
+          author: book.author,
+          category: book.category,
+          description: book.description,
+          imageUrl: book.imageUrl,
+          totalCopies: book.totalCopies,
+          availableCopies: book.availableCopies,
+          addedBy: book.addedBy,
+        },
         borrowerName,
         borrowerEmail,
         returnDate,
       };
 
-      console.log("Borrow Data:", borrowData);
+      console.log("Borrow API payload:", JSON.stringify(borrowData, null, 2));
 
       // TODO: Connect your borrow API here.
 
-      // Example:
-      // const res = await fetch(
-      //   `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/borrow-book`,
-      //   {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify(borrowData),
-      //   }
-      // );
+     
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/my-borrows`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(borrowData),
+        },
+      );
 
-      // if (!res.ok) throw new Error("Borrow failed");
+      const responseData = await res.json().catch(() => null);
 
-      // সাকসেস টোস্ট
+      if (!res.ok) {
+        // Surface the backend's reason (already borrowed / no copies left).
+        throw new Error(responseData?.message || "Borrow failed");
+      }
+
       toast.success("Borrow request submitted successfully!", {
         description: `Due date: ${returnDate}`,
       });
 
       setIsOpen(false);
+
+      // Re-run the server component so the availability badge updates.
+      router.refresh();
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong!"); // এরর টোস্ট
+      toast.error(error?.message || "Something went wrong!"); // এরর টোস্ট
     } finally {
       setLoading(false);
     }
@@ -88,7 +108,7 @@ const BorrowBookModal = ({ book, user = null }) => {
         className="flex-1 flex items-center justify-center gap-2 bg-stone-900 text-stone-100 rounded-sm px-6 py-3 text-xs uppercase tracking-wider font-medium hover:bg-stone-800 transition-colors disabled:opacity-50"
       >
         <Bookmark size={14} />
-        {book.availableCopies ? "Borrow This Book" : "Currently Unavailable"}
+        {book.availableCopies ? "Borrow This Book" : "Not Available"}
       </button>
 
       {/* Modal */}

@@ -1,57 +1,51 @@
-# BookNook — Next.js 16 + React 19
+# BookNook — Next.js 16 + React 19 (App Router)
 
 ## Commands
 
 | Action | Command |
 |--------|---------|
-| Start dev server (Turbopack) | `npm run dev` |
-| Build for production | `npm run build` |
-| Start production server | `npm run start` |
-| Lint | `npm run lint` |
+| Dev server (Turbopack) | `npm run dev` |
+| Production build | `npm run build` |
+| Production server | `npm run start` |
+| Lint | `npm run lint` (runs `eslint` flat config in `eslint.config.mjs`) |
 
-**Order matters:** Run `lint` before `build`. There is no `typecheck` script — `next build` runs `tsc` (`strict`, `noEmit`) and fails on type errors. There are **no tests and no CI**: `npm run lint` + `npm run build` is the full verification gate.
+**Verification gate = `npm run lint` then `npm run build`.** There is no `typecheck` script — `next build` runs `tsc` (`strict`, `noEmit`) and fails on type errors. **No tests, no CI** exist; if you add tests, pick a framework and add the script yourself. Lint currently exits 0 with ~8 warnings (unused vars, one `<img>`), so warnings are tolerated — errors are not.
+
+Build facts (verified locally):
+
+- `next build` loads `.env` and passes **with the backend on :8000 stopped** — no services needed to build.
+- During "Generating static pages" it prints `Failed to load new arrivals: ... DYNAMIC_SERVER_USAGE` from `src/components/new-arrivals.tsx`. That's expected noise: `/` just stays dynamic (ƒ). The build still succeeds.
+- No `[Better Auth]: Social provider github is missing clientId...` warning appears — `src/lib/auth.ts` only adds the github provider when both creds are set (they are absent here).
 
 ## Environment
 
-Env files are gitignored (`.env*`) — a fresh clone has none. This working tree already has a populated `.env`; `.env.local` also works and takes precedence.
-
-```
-BACKEND_BASE_URL=http://localhost:8000
-BACKEND_NEW_ARRIVEL_URL=http://localhost:8000/new-arrivals   # spelling "ARRIVEL" is intentional — match it exactly
-NEXT_PUBLIC_IMGBB_API_KEY=your_key_here                       # ImgBB uploads on add-book
-MONGO_DB_URL=...                                              # MongoDB — required by Better Auth (src/lib/auth.ts)
-BETTER_AUTH_SECRET=...  BETTER_AUTH_URL=http://localhost:3000 # Better Auth
-```
-
-- A separate backend service (port 8000) must be running for most pages to render. The homepage's `NewArrivals` server component (`cache: "no-store"`) degrades to a "temporarily unavailable" notice when the backend is down — it still **throws** if `BACKEND_NEW_ARRIVEL_URL` is unset (a config error worth surfacing). `/all-books` degrades to an error toast; `/all-books/:id` renders a "Failed to load book details" page on network failure.
-- Only `NEXT_PUBLIC_*` vars are inlined into client components; the others are `undefined` in the browser. Note that `all-books/page.tsx` and `add-book/page.tsx` are `"use client"` yet read `BACKEND_BASE_URL` — all-books guards it with a hardcoded `http://localhost:8000` fallback, add-book has none. Put backend calls in server components or route handlers (or promote the var to `NEXT_PUBLIC_`).
-- `GITHUB_CLIENT_ID`/`GITHUB_CLIENT_SECRET` are absent, so `next build` prints `[Better Auth]: Social provider github is missing clientId or clientSecret` — harmless, but social sign-in can't work until they're added.
+- `.env.example` is the tracked template (`.env*` is otherwise gitignored). This tree already has a populated `.env`, which Next loads in dev and build; `.env.local` also works and takes precedence.
+- Backend is a separate service at `http://localhost:8000`, source in the sibling repo **`../booknook-server`** (`index.js`, Express + MongoDB, `npm start` = plain `node index.js` — **no watcher, so restart it manually after editing**). Pages still render without it, but with degraded content: homepage `NewArrivals` (server component, `cache: "no-store"`) shows a "temporarily unavailable" notice, `/all-books` shows an error toast, `/all-books/:id` and `/my-borrows` render a failure state.
+- Var split — only `NEXT_PUBLIC_*` exist in the browser:
+  - `BACKEND_BASE_URL` — server-side only (`all-books/[id]/page.jsx`).
+  - `NEXT_PUBLIC_BACKEND_BASE_URL` — browser-side (`/all-books`, `/add-book`, borrow modal). Client code falls back to `http://localhost:8000` **only when `NODE_ENV === "development"`**; a production build without it throws "not configured". Trailing slashes are stripped before use.
+  - `BACKEND_NEW_ARRIVEL_URL` — homepage only. The `ARRIVEL` misspelling is intentional; match it exactly. If unset, `new-arrivals.tsx` **throws** (config error — no fallback).
+  - `MONGO_DB_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL` — read at module scope by `src/lib/auth.ts`, which throws immediately when `MONGO_DB_URL` is missing.
+  - `NEXT_PUBLIC_IMGBB_API_KEY` — ImgBB cover upload on `/add-book` (key is exposed to browsers by design; missing key = toast error, not a crash).
+  - `GITHUB_CLIENT_ID`/`GITHUB_CLIENT_SECRET` — optional; absent means no GitHub provider at all. The Google buttons in `/login` and `/register` are stubs that only show an info toast.
 
 ## Project structure
 
-- **App Router** (`src/app/`) — Routes: `/`, `/all-books`, `/all-books/:id`, `/add-book`, `/login`, `/register`, `/my-books`, `/my-borrows`, plus `/api/auth/[...all]`. Root layout wraps everything in `ThemeProvider` + `Navbar` + `Footer` + `Toaster` (sonner).
-- **Components** (`src/components/`) — shadcn/ui primitives (`src/components/ui/`, config in `components.json`, style `base-nova`, lucide icons — add more with `npx shadcn add <name>`) + custom components (navbar, footer, banner, new-arrivals, top-categories, borrowing-steps, reader-reviews, home-navigation).
-- **Contexts** (`src/contexts/`) — `ThemeProvider`/`useTheme` toggles light/dark via `classList.toggle("dark")` on `<html>`. **No persistence** — resets on refresh.
-- **Hooks** (`src/hooks/`) — `useIsMobile` uses `window.matchMedia` with 768px breakpoint.
-- **Lib** (`src/lib/`) — `utils.ts` re-exports `cn` from the `cn` package; `auth.ts` (server Better Auth config, MongoDB adapter) and `auth-client.ts` (browser client).
-- **Fonts** — `next/font` loads Playfair Display (serif headings), Inter (sans body), Geist Mono. CSS variables: `--font-playfair`, `--font-inter`, `--font-geist-mono`.
-- **Path aliases** — `@/` maps to `./src/*` (tsconfig.json). Use `import ... from "@/..."` throughout.
+- **App Router** (`src/app/`) — `/`, `/all-books`, `/all-books/:id`, `/add-book`, `/login`, `/register`, `/my-books`, `/my-borrows`, `/api/auth/[...all]`. Root layout = `ThemeProvider` + `Navbar` + `main` + `Toaster` (sonner) + `Footer`; theme awareness comes from it, so **don't wrap new pages in `ThemeProvider` again**.
+- **Fetch split** — server components fetch in `new-arrivals.tsx` (homepage), `all-books/[id]/page.jsx` and `my-borrows/page.tsx`; client pages/components fetch in `all-books/page.tsx`, `add-book/page.tsx`, `BorrowBookModal.jsx` and `my-borrows/my-borrows-list.tsx`. Backend calls: GET `/all-books`, GET `/all-books/:id`, POST `/add-book`, GET/POST `/my-borrows`, DELETE `/my-borrows/:id`, plus `BACKEND_NEW_ARRIVEL_URL`. `GET /my-borrows` returns a **plain array of every user's records** (no auth scoping). Books carry an `availableCopies` counter (backfilled on all 39 docs; `POST /add-book` seeds it from `totalCopies`) that the borrow/return routes `$inc`.
+- **Components** (`src/components/`) — shadcn/ui primitives in `ui/` (config `components.json`, style `base-nova`, lucide icons — add more with `npx shadcn add <name>`) + custom ones (navbar, footer, banner, new-arrivals, top-categories, borrowing-steps, reader-reviews, home-navigation).
+- **Lib/hooks/contexts** — `@/lib/auth.ts` (server Better Auth, MongoDB adapter, db `booknook`, `autoSignIn: false`), `@/lib/auth-client.ts` (browser client, no `baseURL` → same-origin `/api/auth/*`), `@/lib/utils.ts` re-exports `cn` from the `cn` package, `@/hooks/use-mobile.ts` (`useIsMobile`, 768px), `@/contexts/ThemeContext.tsx` (toggles `.dark` on `<html>` — **no persistence, resets on refresh**).
+- **Fonts/aliases** — `next/font` supplies `--font-playfair`, `--font-inter`, `--font-geist-mono` (never `import` them manually). `@/` → `./src/*`; use it everywhere.
 
 ## Key quirks
 
-- **Borrow is not wired up.** `all-books/[id]/BorrowBookModal.jsx` has the API POST commented out (`// TODO: Connect your borrow API here`) — submitting only shows a success toast, no backend call. Same file also falls back to a hardcoded borrower name/email.
-- **Auth = Better Auth** (email/password, MongoDB adapter, db `booknook`). `/login` and `/register` call `authClient` (`src/lib/auth-client.ts`) → `POST /api/auth/*` (`src/app/api/auth/[...all]/route.ts` → `src/lib/auth.ts`). `autoSignIn: false` — a successful registration redirects to `/login`. The configured social provider is `github`, **not** Google — the Google buttons just show an info toast. `BETTER_AUTH_URL` is read in a client file without `NEXT_PUBLIC_`, so it's `undefined` in the browser and falls back to same-origin (fine: the API route lives in this app).
-- **Session not wired into the UI yet.** The navbar accepts a `user` prop but the layout renders `<Navbar />` with none (`useSession` is unused), and `add-book/page.tsx` still hardcodes user name/email (`"Rezowan Kabir"`, `"example@gmail.com"`). Replace both with real session data.
-- **Stub routes** — `/my-books` and `/my-borrows` render placeholder text only; no data fetching.
-- **Mixed JS/TS** — `all-books/[id]/page.jsx` and `BorrowBookModal.jsx` are the only `.jsx` files (explicitly listed in tsconfig `include`). Write new code as `.tsx`.
-- **React Compiler** (`reactCompiler: true`) is enabled in `next.config.ts`. Components may behave differently than classic RSC setups — avoid assuming `useState`/`useEffect` ordering conventions from older Next.js versions.
-- **Tailwind CSS v4** with a `turbopack` rule for `*.css` — CSS is processed by Turbopack, not webpack. Editing `globals.css` requires a full reload.
-- **No test scripts** in `package.json`. If you add tests, pick a framework (Jest, Vitest, etc.) and add scripts manually.
-- **`next/font`** fonts are optimized and inlined. Do not `import` them manually or `next build` may complain about duplicate fonts.
-- **External images** — `next.config.ts` `images.remotePatterns` allows `images.unsplash.com`, `i.ibb.co`, `**.ibb.co`, `imgbb.com`, `**.postimages.org`, and `localhost`. Add new domains there if needed.
-- **Backend API** — GET `${BACKEND_BASE_URL}/all-books` and `/all-books/:id`; POST `${BACKEND_BASE_URL}/add-book`.
-
-## Adding a new page
-
-1. Create `src/app/<route>/page.tsx` (App Router). Theme awareness comes from the root layout's `ThemeProvider` — no need to wrap again.
-2. Use `import ... from "@/components/ui/..."` for shadcn/ui components.
+- **Borrow flow is enforced in the backend, not the UI.** `all-books/[id]/BorrowBookModal.jsx` POSTs to `${NEXT_PUBLIC_BACKEND_BASE_URL}/my-borrows`; the server rejects a second active loan of the same book per `borrowerEmail` (**409**) and an out-of-stock book (**409**), then `$inc`s `availableCopies` by −1 (with a guarded `$gt: 0` update so concurrent borrows can't oversell; a failed insert rolls the copy back). The modal surfaces the server's `message` in its error toast and calls `router.refresh()` on success. The `// TODO: Connect your borrow API here` comment in that file is stale, and the detail page passes no `user` prop, so borrower name/email still fall back to hardcoded values. `page.jsx` reads the real `availableCopies` (falls back to `totalCopies` for legacy docs); at 0 the cover badge and button both say "Not Available".
+- **Navbar owns the session.** `navbar.tsx` calls `authClient.useSession()` directly and gates nav links on login — don't look for a `user` prop. Its dropdown "My Profile" links to `/profile`, **which has no route** (404). `useSession` is also exported from `@/lib/auth-client.ts`.
+- **`/my-books` is still a stub** (placeholder text, no fetching) even though the navbar links to it when logged in. `/my-borrows` is done: `page.tsx` server-fetches `GET /my-borrows` (`cache: "no-store"`, degrades to a failure state) and renders `my-borrows-list.tsx` (client), whose "Return Book" button `DELETE`s `/my-borrows/:id` (record is **deleted**, not marked returned — so returned books vanish from both tables; the archive only shows records already `status: "returned"`), drops the row from local `removedIds` state, then `router.refresh()`s.
+- **`/add-book` still hardcodes `addedBy` name/email** (`"Rezowan Kabir"` / `"example@gmail.com"`, marked TODO) — replace with real session data if you touch it.
+- **Auth flow** — `/register` calls `authClient.signUp.email` then `router.push("/login")`; `/login` pushes `/` on success; logout is `authClient.signOut` in the navbar.
+- **Mixed JS/TS** — only `all-books/[id]/page.jsx` and `BorrowBookModal.jsx` are `.jsx`, and only `page.jsx` is listed in tsconfig `include`. Write new code as `.tsx`.
+- **React Compiler** (`experimental.reactCompiler: true` in `next.config.ts`) is on — don't assume classic RSC/`useState` ordering conventions. Also `cacheComponents: false`.
+- **Tailwind v4 via Turbopack** — `*.css` runs through `@tailwindcss/turbopack`; editing `globals.css` needs a full reload.
+- **External images** — `next.config.ts` `images.remotePatterns` allows `images.unsplash.com`, `i.ibb.co`, `**.ibb.co`, `imgbb.com`, `**.postimages.org`, `localhost`. Add new hosts there.
+- **New page** → `src/app/<route>/page.tsx`; pull UI from `@/components/ui/...`.
