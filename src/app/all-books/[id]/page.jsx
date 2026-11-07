@@ -2,10 +2,16 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Bookmark } from "lucide-react";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import BorrowBookModal from "./BorrowBookModal";
 
 const BookDetailsPage = async ({ params }) => {
   const { id } = await params;
+  const session = await auth.api.getSession({ headers: await headers() });
+  const user = session?.user
+    ? { name: session.user.name, email: session.user.email }
+    : null;
 
   let data;
   try {
@@ -181,6 +187,7 @@ const BookDetailsPage = async ({ params }) => {
                     availableCopies,
                     addedBy,
                   }}
+                  user={user}
                 />
 
                 <Link

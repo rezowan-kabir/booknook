@@ -1,45 +1,48 @@
 import Link from "next/link";
 import { BookOpen } from "lucide-react";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import MyBorrowsList, { type BorrowRecord } from "./my-borrows-list";
 
 const getBackendBaseUrl = () =>
   (
     process.env.BACKEND_BASE_URL ||
     process.env.NEXT_PUBLIC_BACKEND_BASE_URL ||
-    ""
+    "http://localhost:8000"
   ).replace(/\/+$/, "");
 
-async function fetchBorrows(): Promise<BorrowRecord[] | null> {
+async function fetchBorrows(email: string): Promise<BorrowRecord[] | null> {
   const backendBaseUrl = getBackendBaseUrl();
-
   if (!backendBaseUrl) {
     console.error("Backend URL is not configured.");
     return null;
   }
-
   try {
-    const res = await fetch(`${backendBaseUrl}/my-borrows`, {
-      cache: "no-store",
-    });
-
+    // আপনার ব্যাকএন্ডের রাউট: /my-borrow/:email
+    const res = await fetch(
+      `${backendBaseUrl}/my-borrow/${encodeURIComponent(email)}`,
+      { cache: "no-store" },
+    );
     if (!res.ok) {
       throw new Error(`Failed to fetch borrows: ${res.status}`);
     }
-
     const data = await res.json();
     return Array.isArray(data) ? data : null;
   } catch (error) {
-    // Backend unreachable or errored — degrade instead of crashing the page.
     console.error("Failed to load borrows:", error);
     return null;
   }
 }
 
 export default async function MyBorrowsPage() {
-  const borrows = await fetchBorrows();
+  const session = await auth.api.getSession({ headers: await headers() });
+  const email = session?.user?.email;
 
-  const active = borrows?.filter((borrow) => borrow.status !== "returned") ?? [];
-  const returned = borrows?.filter((borrow) => borrow.status === "returned") ?? [];
+  const borrows = email ? await fetchBorrows(email) : [];
+  const active =
+    borrows?.filter((borrow) => borrow.status !== "returned") ?? [];
+  const returned =
+    borrows?.filter((borrow) => borrow.status === "returned") ?? [];
 
   return (
     <div className="min-h-screen bg-[#F7F5F0] dark:bg-stone-950">
@@ -61,7 +64,6 @@ export default async function MyBorrowsPage() {
               dates, and return them when finished.
             </p>
           </div>
-
           <Link
             href="/all-books"
             className="inline-flex shrink-0 items-center gap-2 self-start rounded-full bg-amber-100 px-5 py-2.5 text-sm font-medium text-amber-900 transition-colors hover:bg-amber-200 dark:bg-amber-900/40 dark:text-amber-100 dark:hover:bg-amber-900/60"
@@ -70,12 +72,22 @@ export default async function MyBorrowsPage() {
             Borrow More Books
           </Link>
         </div>
-
         {/* Divider */}
         <div className="mb-10 border-b border-stone-200 dark:border-stone-800" />
-
-        {borrows === null ? (
-          /* Backend unreachable — degrade instead of crashing the page. */
+        {!email ? (
+          <div className="rounded-xl border border-dashed border-stone-200 bg-white/60 px-6 py-20 text-center dark:border-stone-800 dark:bg-stone-900/20">
+            <BookOpen className="mx-auto mb-3 h-10 w-10 text-stone-400" />
+            <p className="mb-1 text-sm font-medium text-stone-700 dark:text-stone-300">
+              Sign in to view your borrows
+            </p>
+            <Link
+              href="/login"
+              className="mt-5 inline-flex items-center gap-2 rounded-md bg-amber-800 px-4 py-2.5 text-xs font-medium text-stone-100 transition-colors hover:bg-amber-900"
+            >
+              Sign In
+            </Link>
+          </div>
+        ) : borrows === null ? (
           <div className="rounded-xl border border-dashed border-stone-200 bg-white/60 px-6 py-20 text-center dark:border-stone-800 dark:bg-stone-900/20">
             <BookOpen className="mx-auto mb-3 h-10 w-10 text-stone-400" />
             <p className="mb-1 text-sm font-medium text-stone-700 dark:text-stone-300">

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import {
   Compass,
   PlusCircle,
@@ -21,10 +22,15 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
+import { useSession } from "@/lib/auth-client";
 
 const categories = ["Fiction", "Science", "History", "Kids", "Other"];
 
 export default function AddBookPage() {
+  const { data: session, isPending: sessionPending } = useSession();
+  const user = session?.user;
+  const userName = user?.name ?? "";
+  const userEmail = user?.email ?? "";
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [category, setCategory] = useState("Fiction");
@@ -33,10 +39,6 @@ export default function AddBookPage() {
   const [description, setDescription] = useState("");
   const [uploading, setUploading] = useState(false);
   const [uploadMode, setUploadMode] = useState<"file" | "url">("file");
-
-  // TODO: Replace these with real user session data after adding login functionality
-  const [userName] = useState("Rezowan Kabir");
-  const [userEmail] = useState("example@gmail.com");
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -83,6 +85,11 @@ export default function AddBookPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) {
+      toast.error("Please sign in before adding a book.");
+      return;
+    }
+
     const bookData = {
       title,
       author,
@@ -340,7 +347,7 @@ export default function AddBookPage() {
                   id="userName"
                   value={userName}
                   readOnly
-                  disabled
+                  placeholder={sessionPending ? "Loading account..." : "Sign in to populate"}
                   className="h-9 text-xs bg-stone-100/60 dark:bg-stone-800/40 text-stone-500 dark:text-stone-400 border-stone-200 dark:border-stone-800 cursor-not-allowed"
                 />
               </div>
@@ -356,17 +363,30 @@ export default function AddBookPage() {
                   id="userEmail"
                   value={userEmail}
                   readOnly
-                  disabled
+                  placeholder={sessionPending ? "Loading account..." : "Sign in to populate"}
                   className="h-9 text-xs bg-stone-100/60 dark:bg-stone-800/40 text-stone-500 dark:text-stone-400 border-stone-200 dark:border-stone-800 cursor-not-allowed"
                 />
               </div>
             </div>
+            {!sessionPending && !user && (
+              <p className="text-xs text-stone-500 dark:text-stone-400">
+                Please{" "}
+                <Link
+                  href="/login"
+                  className="font-medium text-amber-800 underline dark:text-amber-400"
+                >
+                  sign in
+                </Link>{" "}
+                to add a book. Your contributor details will fill in
+                automatically.
+              </p>
+            )}
 
             {/* Submit Button */}
             <div className="flex justify-end pt-2">
               <Button
                 type="submit"
-                disabled={uploading}
+                disabled={uploading || sessionPending || !user}
                 className="bg-amber-800 hover:bg-amber-900 dark:bg-amber-700 dark:hover:bg-amber-800 text-white text-xs h-9 px-5 font-medium"
               >
                 <PlusCircle className="w-3.5 h-3.5 mr-1.5" />

@@ -18,13 +18,9 @@ const BorrowBookModal = ({ book, user = null }) => {
     return date.toISOString().split("T")[0];
   };
 
-  const [borrowerName, setBorrowerName] = useState(
-    user?.name || "Rezowan Kabir",
-  );
+  const [borrowerName, setBorrowerName] = useState(user?.name || "");
 
-  const [borrowerEmail, setBorrowerEmail] = useState(
-    user?.email || "rezownkabir@gmail.com",
-  );
+  const [borrowerEmail, setBorrowerEmail] = useState(user?.email || "");
 
   const [returnDate, setReturnDate] = useState(getDefaultDate());
 

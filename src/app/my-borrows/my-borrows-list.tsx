@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,7 +9,15 @@ import { BookOpen, CircleCheck, Clock, Loader2, RotateCcw } from "lucide-react";
 export interface BorrowRecord {
   _id: string;
   bookId: string;
-  bookDetails: {
+  title: string;
+  imageUrl: string;
+  borrowerName: string;
+  borrowerEmail: string;
+  returnDate: string;
+  borrowedAt: string;
+  status: string;
+  returnedAt?: string;
+  bookDetails?: {
     _id: string;
     title: string;
     author: string;
@@ -19,52 +26,48 @@ export interface BorrowRecord {
     imageUrl: string;
     totalCopies: number;
     availableCopies?: number;
-    addedBy?: {
-      name: string;
-      email: string;
-    };
   };
-  borrowerName: string;
-  borrowerEmail: string;
-  returnDate: string;
-  borrowedAt: string;
-  status: string;
-  returnedAt?: string;
 }
 
 const formatDay = (value?: string) => (value ? value.slice(0, 10) : "—");
-
 const formatLongDate = (value?: string) => {
   if (!value) return "—";
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? "—" : date.toLocaleDateString("en-US");
 };
 
-const BookCell = ({ record }: { record: BorrowRecord }) => (
-  <div className="flex min-w-0 items-center gap-3">
-    {record.bookDetails.imageUrl ? (
-      <Image
-        src={record.bookDetails.imageUrl}
-        alt={record.bookDetails.title}
-        width={40}
-        height={56}
-        className="h-14 w-10 shrink-0 rounded-sm border border-stone-200 object-cover shadow-sm"
-      />
-    ) : (
-      <div className="flex h-14 w-10 shrink-0 items-center justify-center rounded-sm border border-stone-200 bg-stone-100">
-        <BookOpen className="h-4 w-4 text-stone-400" />
+const BookCell = ({ record }: { record: BorrowRecord }) => {
+  // ব্যাকএন্ডে যদি সরাসরি title/imageUrl সেভ হয়ে থাকে অথবা bookDetails অবজেক্টে থাকে, দুইভাবেই সাপোর্ট করবে
+  const bookTitle =
+    record.title || record.bookDetails?.title || "Untitled Book";
+  const bookImage = record.imageUrl || record.bookDetails?.imageUrl || "";
+
+  return (
+    <div className="flex min-w-0 items-center gap-3">
+      {bookImage ? (
+        <Image
+          src={bookImage}
+          alt={bookTitle}
+          width={40}
+          height={56}
+          className="h-14 w-10 shrink-0 rounded-sm border border-stone-200 object-cover shadow-sm"
+        />
+      ) : (
+        <div className="flex h-14 w-10 shrink-0 items-center justify-center rounded-sm border border-stone-200 bg-stone-100">
+          <BookOpen className="h-4 w-4 text-stone-400" />
+        </div>
+      )}
+      <div className="min-w-0">
+        <p className="truncate font-serif text-sm font-medium text-stone-900 dark:text-stone-100">
+          {bookTitle}
+        </p>
+        <p className="truncate text-[11px] text-stone-400 dark:text-stone-500">
+          ID: {record.bookId}
+        </p>
       </div>
-    )}
-    <div className="min-w-0">
-      <p className="truncate font-serif text-sm font-medium text-stone-900 dark:text-stone-100">
-        {record.bookDetails.title}
-      </p>
-      <p className="truncate text-[11px] text-stone-400 dark:text-stone-500">
-        ID: {record.bookId}
-      </p>
     </div>
-  </div>
-);
+  );
+};
 
 const thClassName =
   "px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400";
@@ -79,8 +82,6 @@ const MyBorrowsList = ({
 }) => {
   const router = useRouter();
   const [returningId, setReturningId] = useState<string | null>(null);
-  // Rows the user has returned in this session — dropped from the UI right
-  // away, then router.refresh() re-syncs with the server.
   const [removedIds, setRemovedIds] = useState<string[]>([]);
 
   const activeRows = active.filter(
@@ -101,26 +102,20 @@ const MyBorrowsList = ({
 
     try {
       setReturningId(id);
-
       const res = await fetch(
         `${backendBaseUrl.replace(/\/+$/, "")}/my-borrows/${id}`,
         { method: "DELETE" },
       );
-
       const data = await res.json().catch(() => null);
 
       if (!res.ok) {
-        // Surface the backend's reason instead of a generic failure.
         throw new Error(data?.message || "Failed to return the book");
       }
 
       setRemovedIds((prev) => [...prev, id]);
-
       toast.success("Book returned successfully!", {
         description: "Thanks — the copy is back on the shelf.",
       });
-
-      // Re-run the server component so the checked-out count stays accurate.
       router.refresh();
     } catch (error) {
       console.error(error);
@@ -147,7 +142,6 @@ const MyBorrowsList = ({
             Currently Checked Out ({activeRows.length})
           </h2>
         </div>
-
         {activeRows.length === 0 ? (
           <div className="rounded-xl border border-dashed border-stone-200 bg-white/60 px-6 py-14 text-center dark:border-stone-800 dark:bg-stone-900/20">
             <p className="mb-1 text-sm font-medium text-stone-700 dark:text-stone-300">
@@ -185,10 +179,14 @@ const MyBorrowsList = ({
                     <td className={tdClassName}>
                       <BookCell record={record} />
                     </td>
-                    <td className={`${tdClassName} font-mono text-xs text-stone-500 dark:text-stone-400`}>
+                    <td
+                      className={`${tdClassName} font-mono text-xs text-stone-500 dark:text-stone-400`}
+                    >
                       {formatDay(record.borrowedAt)}
                     </td>
-                    <td className={`${tdClassName} font-mono text-xs text-stone-500 dark:text-stone-400`}>
+                    <td
+                      className={`${tdClassName} font-mono text-xs text-stone-500 dark:text-stone-400`}
+                    >
                       {formatDay(record.returnDate)}
                     </td>
                     <td className={tdClassName}>
@@ -230,7 +228,6 @@ const MyBorrowsList = ({
               Returned Volumes Archive ({returned.length})
             </h2>
           </div>
-
           <div className="overflow-x-auto rounded-xl border border-stone-200 bg-white shadow-sm dark:border-stone-800 dark:bg-stone-900/60">
             <table className="w-full min-w-[640px] text-left">
               <thead>
@@ -250,10 +247,14 @@ const MyBorrowsList = ({
                     <td className={tdClassName}>
                       <BookCell record={record} />
                     </td>
-                    <td className={`${tdClassName} font-mono text-xs text-stone-500 dark:text-stone-400`}>
+                    <td
+                      className={`${tdClassName} font-mono text-xs text-stone-500 dark:text-stone-400`}
+                    >
                       {formatDay(record.borrowedAt)}
                     </td>
-                    <td className={`${tdClassName} font-mono text-xs text-stone-500 dark:text-stone-400`}>
+                    <td
+                      className={`${tdClassName} font-mono text-xs text-stone-500 dark:text-stone-400`}
+                    >
                       {formatLongDate(record.returnedAt)}
                     </td>
                     <td className={tdClassName}>
