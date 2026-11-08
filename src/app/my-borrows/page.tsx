@@ -3,6 +3,7 @@ import { BookOpen } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import MyBorrowsList, { type BorrowRecord } from "./my-borrows-list";
+import getTokenFromServer from "@/lib/getTokenFromServer";
 
 const getBackendBaseUrl = () =>
   (
@@ -16,12 +17,18 @@ async function fetchBorrows(email: string): Promise<BorrowRecord[] | null> {
   if (!backendBaseUrl) {
     console.error("Backend URL is not configured.");
     return null;
-  }
+  } 
+  const token = await getTokenFromServer()
   try {
     // আপনার ব্যাকএন্ডের রাউট: /my-borrow/:email
     const res = await fetch(
       `${backendBaseUrl}/my-borrow/${encodeURIComponent(email)}`,
-      { cache: "no-store" },
+      {
+        cache: "no-store",
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      },
     );
     if (!res.ok) {
       throw new Error(`Failed to fetch borrows: ${res.status}`);

@@ -1,45 +1,71 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, Bookmark } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import BorrowBookModal from "./BorrowBookModal";
+import getTokenFromServer from "@/lib/getTokenFromServer";
 
 const BookDetailsPage = async ({ params }) => {
   const { id } = await params;
+  
+  // Fetch session data securely on the server
   const session = await auth.api.getSession({ headers: await headers() });
   const user = session?.user
     ? { name: session.user.name, email: session.user.email }
     : null;
 
-  let data;
+  let book = null;
+ 
+
+ const token = await getTokenFromServer()
+
   try {
     const res = await fetch(`${process.env.BACKEND_BASE_URL}/all-books/${id}`, {
       cache: "no-store",
+      headers:{
+        authorization: `Bearer ${token}`
+      }
     });
 
     if (!res.ok) {
       throw new Error(`Failed to load book details: ${res.status}`);
     }
 
-    data = await res.json();
+    const data = await res.json();
+    book = data.result || null;
   } catch (error) {
-    // Backend unreachable or errored — degrade instead of crashing the page.
-    console.error("Failed to load book details:", error);
+    console.error("Failed to fetch book details:", error);
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <h2 className="text-xl font-semibold">Failed to load book details.</h2>
+      <div className="min-h-screen bg-[#F7F5F0] flex items-center justify-center p-4">
+        <div className="text-center bg-white border border-stone-200 p-8 rounded-sm shadow-sm max-w-md w-full">
+          <h2 className="text-lg font-serif font-semibold text-stone-900 mb-2">Failed to load book details.</h2>
+          <p className="text-xs text-stone-500 mb-6">The server might be temporarily unreachable.</p>
+          <Link
+            href="/all-books"
+            className="inline-block bg-stone-900 text-stone-100 text-xs uppercase tracking-wider px-4 py-2 rounded-sm hover:bg-stone-800 transition-colors"
+          >
+            Return to Catalog
+          </Link>
+        </div>
       </div>
     );
   }
 
-  const book = data.result;
-
   if (!book) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <h2 className="text-xl font-semibold">Book not found!</h2>
+      <div className="min-h-screen bg-[#F7F5F0] flex items-center justify-center p-4">
+        <div className="text-center bg-white border border-stone-200 p-8 rounded-sm shadow-sm max-w-md w-full">
+          <h2 className="text-lg font-serif font-semibold text-stone-900 mb-2">Book Not Found</h2>
+          <p className="text-xs text-stone-500 mb-6">The volume you are looking for does not exist or has been removed.</p>
+          <Link
+            href="/all-books"
+            className="inline-block bg-stone-900 text-stone-100 text-xs uppercase tracking-wider px-4 py-2 rounded-sm hover:bg-stone-800 transition-colors"
+          >
+            Browse Catalog
+          </Link>
+        </div>
       </div>
     );
   }
@@ -55,8 +81,8 @@ const BookDetailsPage = async ({ params }) => {
     addedBy,
   } = book;
 
-  // Counter maintained by the backend ($inc on borrow/return). Older
-  // documents without it fall back to the cataloged count.
+  // Counter maintained by the backend ($inc on borrow/return). 
+  // Older documents without it fall back to the cataloged count.
   const availableCopies = book.availableCopies ?? totalCopies;
 
   return (
@@ -86,11 +112,12 @@ const BookDetailsPage = async ({ params }) => {
 
                 <div className="relative w-full aspect-[3/4] max-w-[200px] shadow-md border border-stone-300">
                   <Image
-                    src={imageUrl}
+                    src={imageUrl || "/placeholder-book.png"}
                     alt={title}
                     fill
                     sizes="(max-width: 768px) 70vw, 200px"
                     className="object-cover"
+                    priority
                   />
                 </div>
               </div>
@@ -154,10 +181,10 @@ const BookDetailsPage = async ({ params }) => {
                       Contributed by
                     </p>
                     <p className="text-xs font-medium text-stone-900">
-                      {addedBy?.name}
+                      {addedBy?.name || "Unknown Member"}
                     </p>
                     <p className="text-[11px] text-stone-400">
-                      {addedBy?.email}
+                      {addedBy?.email || "No email provided"}
                     </p>
                   </div>
                 </div>
@@ -175,20 +202,7 @@ const BookDetailsPage = async ({ params }) => {
 
               {/* Bottom Actions */}
               <div className="mt-10 pt-4 border-t border-stone-200 flex flex-col sm:flex-row gap-3">
-                <BorrowBookModal
-                  book={{
-                    _id,
-                    title,
-                    author,
-                    category,
-                    description,
-                    imageUrl,
-                    totalCopies,
-                    availableCopies,
-                    addedBy,
-                  }}
-                  user={user}
-                />
+                <BorrowBookModal book={book} user={user} />
 
                 <Link
                   href="/all-books"

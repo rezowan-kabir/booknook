@@ -36,8 +36,12 @@ for every environment you use (Production, Preview, and Development as needed):
 
 Do not use `localhost` for backend URLs in Vercel. Deploy the backend separately
 and allow requests from the Vercel app's origin (including Preview origins if
-needed). After changing Vercel environment variables, redeploy so the new values
-are applied. Never commit `.env`, `.env.local`, or production credentials.
+needed). The backend must also set `FRONTEND_BASE_URL` to the public frontend
+origin used for Better Auth's `/api/auth/jwks` endpoint, so its JWT verifier can
+retrieve the signing keys. Set `BETTER_AUTH_URL` to the exact public app origin
+for each Vercel environment. After changing environment variables, redeploy so
+the new values are applied. Never commit `.env`, `.env.local`, or production
+credentials.
 
 Before deploying, run:
 

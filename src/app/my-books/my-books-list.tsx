@@ -53,6 +53,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import getTokenFromClient from "@/lib/getTokenFromClient";
 
 export interface Book {
   _id: string;
@@ -163,14 +164,20 @@ export default function MyBooksList({
     }
 
     setUploading(true);
-
+    const token = await getTokenFromClient();
     try {
       const formData = new FormData();
       formData.append("image", file);
 
       const response = await fetch(
         `https://api.imgbb.com/1/upload?key=${apiKey}`,
-        { method: "POST", body: formData },
+        {
+          method: "POST",
+          body: formData,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
       );
       const data = await response.json();
 
@@ -201,21 +208,18 @@ export default function MyBooksList({
     try {
       setSaving(true);
 
-      const res = await fetch(
-        `${backendBaseUrl}/my-books/${editing._id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            title: form.title.trim(),
-            author: form.author.trim(),
-            category: form.category,
-            totalCopies: Number(form.totalCopies),
-            imageUrl: form.imageUrl.trim(),
-            description: form.description.trim(),
-          }),
-        },
-      );
+      const res = await fetch(`${backendBaseUrl}/my-books/${editing._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: form.title.trim(),
+          author: form.author.trim(),
+          category: form.category,
+          totalCopies: Number(form.totalCopies),
+          imageUrl: form.imageUrl.trim(),
+          description: form.description.trim(),
+        }),
+      });
 
       const data = await res.json().catch(() => null);
 
@@ -539,7 +543,7 @@ export default function MyBooksList({
                 htmlFor="edit-image"
                 className="text-[11px] font-semibold uppercase tracking-wider"
               >
-                Book Cover Image  *
+                Book Cover Image *
               </Label>
               <div className="flex gap-2">
                 <Input

@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect, Suspense, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Search, BookOpen, ArrowUpRight, Check } from "lucide-react";
+import { Search, BookOpen, ArrowUpRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -22,47 +22,51 @@ interface Book {
   description: string;
   imageUrl: string;
   totalCopies: number;
-  availableCopies?: number; // Optional if handled dynamically
+  availableCopies?: number;
   addedBy: {
     name: string;
     email: string;
   };
 }
 
-const categories = [
+const CATEGORIES = [
   "All Shelves",
   "Fiction",
   "Science",
   "History",
   "Kids",
   "Other",
-];
+] as const;
 
-const sortOptions = [
+const SORT_OPTIONS = [
   { value: "newest", label: "Newest Cataloged" },
   { value: "title", label: "Title A–Z" },
   { value: "author", label: "Author A–Z" },
   { value: "available", label: "Most Copies" },
-];
+] as const;
 
 function AllBooksContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get("category");
+
   const [books, setBooks] = useState<Book[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState(() =>
-    categoryParam && categories.includes(categoryParam)
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>(() =>
+    categoryParam && CATEGORIES.some((category) => category === categoryParam)
       ? categoryParam
       : "All Shelves",
   );
-  const [sortBy, setSortBy] = useState("newest");
-  const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState<string>("newest");
+  const [loading, setLoading] = useState<boolean>(true);
 
-  // Fetch books from backend API on mount
+  // Robust data fetching with proper error handling and abort signaling
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchBooks = async () => {
       try {
+        setLoading(true);
         const backendBaseUrl =
           process.env.NEXT_PUBLIC_BACKEND_BASE_URL ||
           (process.env.NODE_ENV === "development"
@@ -75,51 +79,69 @@ function AllBooksContent() {
 
         const res = await fetch(
           `${backendBaseUrl.replace(/\/+$/, "")}/all-books`,
+          {
+            cache: "no-store",
+            signal: controller.signal,
+          },
         );
 
         if (!res.ok) {
-          throw new Error("Failed to fetch books");
+          throw new Error(`HTTP error! status: ${res.status}`);
         }
 
-        const data = await res.json();
-        setBooks(data);
-      } catch (error) {
-        console.error("Error fetching books:", error);
-        toast.error("Failed to load library catalog.");
+        const data: Book[] = await res.json();
+        setBooks(Array.isArray(data) ? data : []);
+      } catch (error: unknown) {
+        if (!(error instanceof Error && error.name === "AbortError")) {
+          console.error("Failed to fetch library catalog:", error);
+          toast.error(
+            "Failed to load library catalog. Please try again later.",
+          );
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchBooks();
+
+    return () => {
+      controller.abort();
+    };
   }, []);
 
-  // Filter and sort books
-  const filteredBooks = books
-    .filter((book) => {
-      const matchesSearch =
-        book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        book.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        book.description.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory =
-        selectedCategory === "All Shelves" ||
-        book.category === selectedCategory;
-      return matchesSearch && matchesCategory;
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case "title":
-          return a.title.localeCompare(b.title);
-        case "author":
-          return a.author.localeCompare(b.author);
-        case "available":
-          return b.totalCopies - a.totalCopies;
-        default:
-          return 0; // newest first (handled by backend _id sort)
-      }
-    });
+  // Optimized filtering and sorting logic
+  const filteredBooks = React.useMemo(() => {
+    return books
+      .filter((book) => {
+        const query = searchQuery.trim().toLowerCase();
+        const matchesSearch =
+          !query ||
+          book.title?.toLowerCase().includes(query) ||
+          book.author?.toLowerCase().includes(query) ||
+          book.description?.toLowerCase().includes(query);
 
-  const getCategoryBadgeColor = (category: string) => {
+        const matchesCategory =
+          selectedCategory === "All Shelves" ||
+          book.category === selectedCategory;
+
+        return matchesSearch && matchesCategory;
+      })
+      .sort((a, b) => {
+        switch (sortBy) {
+          case "title":
+            return (a.title || "").localeCompare(b.title || "");
+          case "author":
+            return (a.author || "").localeCompare(b.author || "");
+          case "available":
+            return (b.totalCopies || 0) - (a.totalCopies || 0);
+          default:
+            return 0;
+        }
+      });
+  }, [books, searchQuery, selectedCategory, sortBy]);
+
+  const getCategoryBadgeColor = useCallback((category: string): string => {
     switch (category) {
       case "Fiction":
         return "text-amber-700 dark:text-amber-400";
@@ -134,7 +156,17 @@ function AllBooksContent() {
       default:
         return "text-stone-700 dark:text-stone-400";
     }
-  };
+  }, []);
+
+  const getInitials = useCallback((name?: string): string => {
+    if (!name) return "RK";
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  }, []);
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -179,14 +211,14 @@ function AllBooksContent() {
           <Select
             value={sortBy}
             onValueChange={(value) => {
-              if (value !== null) setSortBy(value);
+              if (value) setSortBy(value);
             }}
           >
             <SelectTrigger className="w-[170px] h-10 bg-white dark:bg-stone-900/50 border-stone-200 dark:border-stone-800 text-xs rounded-sm shadow-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {sortOptions.map((option) => (
+              {SORT_OPTIONS.map((option) => (
                 <SelectItem
                   key={option.value}
                   value={option.value}
@@ -202,7 +234,7 @@ function AllBooksContent() {
 
       {/* Category Filter Buttons */}
       <div className="flex flex-wrap items-center gap-2 mb-10">
-        {categories.map((category) => (
+        {CATEGORIES.map((category) => (
           <button
             key={category}
             onClick={() => setSelectedCategory(category)}
@@ -245,7 +277,7 @@ function AllBooksContent() {
               className="group overflow-hidden bg-white dark:bg-stone-900/60 border-stone-200/80 dark:border-stone-800 hover:border-stone-300 dark:hover:border-stone-700 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer rounded-sm flex flex-col"
               onClick={() => router.push(`/all-books/${book._id}`)}
             >
-              {/* Book Cover Container (Editorial Aspect Ratio) */}
+              {/* Book Cover Container */}
               <div className="relative aspect-[4/3] overflow-hidden bg-stone-100 dark:bg-stone-800">
                 {book.imageUrl ? (
                   <img
@@ -259,16 +291,13 @@ function AllBooksContent() {
                   </div>
                 )}
 
-                {/* Subtle Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-stone-950/40 via-transparent to-transparent opacity-60" />
 
-                {/* Copies Badge */}
                 <div className="absolute top-3 right-3 px-2.5 py-1 text-[11px] font-medium bg-white/90 dark:bg-stone-900/90 backdrop-blur-sm text-emerald-700 dark:text-emerald-300 rounded-full flex items-center gap-1.5 shadow-sm border border-stone-200/50 dark:border-stone-700/50">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   {book.totalCopies} Copies
                 </div>
 
-                {/* Category Badge on Image */}
                 <div className="absolute bottom-3 left-3">
                   <span
                     className={`inline-block px-2.5 py-0.5 text-[11px] font-medium rounded bg-white/90 dark:bg-stone-900/90 backdrop-blur-sm shadow-sm ${getCategoryBadgeColor(
@@ -283,33 +312,25 @@ function AllBooksContent() {
               {/* Card Body */}
               <CardContent className="p-5 flex-1 flex flex-col justify-between">
                 <div>
-                  {/* Author Name */}
                   <p className="text-[11px] font-medium tracking-wide uppercase text-stone-500 dark:text-stone-400 mb-1">
                     {book.author}
                   </p>
 
-                  {/* Title */}
                   <h3 className="font-serif text-base font-semibold text-stone-900 dark:text-stone-100 mb-2 line-clamp-1 group-hover:text-amber-800 dark:group-hover:text-amber-400 transition-colors">
                     {book.title}
                   </h3>
 
-                  {/* Description */}
                   <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed line-clamp-2 mb-4">
                     {book.description}
                   </p>
                 </div>
 
-                {/* Footer / Contributor info */}
+                {/* Footer */}
                 <div className="flex items-center justify-between pt-4 border-t border-stone-100 dark:border-stone-800/80">
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-full bg-amber-100 dark:bg-amber-900/40 border border-amber-200 dark:border-amber-800/50 flex items-center justify-center shrink-0">
                       <span className="text-[10px] font-semibold text-amber-800 dark:text-amber-300">
-                        {book.addedBy?.name
-                          ? book.addedBy.name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")
-                          : "RK"}
+                        {getInitials(book.addedBy?.name)}
                       </span>
                     </div>
                     <span className="text-[11px] font-medium text-stone-600 dark:text-stone-400 truncate max-w-[130px]">

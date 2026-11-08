@@ -23,6 +23,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useSession } from "@/lib/auth-client";
+import getTokenFromClient from "@/lib/getTokenFromClient";
 
 const categories = ["Fiction", "Science", "History", "Kids", "Other"];
 
@@ -112,11 +113,14 @@ export default function AddBookPage() {
       if (!backendBaseUrl) {
         throw new Error("NEXT_PUBLIC_BACKEND_BASE_URL is not configured.");
       }
+      const token = await getTokenFromClient();
 
       const res = await fetch(`${backendBaseUrl.replace(/\/+$/, "")}/add-book`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          authorization: `Bearer ${token}`
+
         },
         body: JSON.stringify(bookData),
       });

@@ -4,6 +4,7 @@ import { BookOpen, Library, PlusCircle } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import MyBooksList, { type Book } from "./my-books-list";
+import getTokenFromServer from "@/lib/getTokenFromServer";
 
 const getBackendBaseUrl = () =>
   (
@@ -19,11 +20,16 @@ async function fetchMyBooks(email: string): Promise<Book[] | null> {
     console.error("Backend URL is not configured.");
     return null;
   }
-
+  const token = await getTokenFromServer()
   try {
     const res = await fetch(
       `${backendBaseUrl}/my-books/${encodeURIComponent(email)}`,
-      { cache: "no-store" },
+      {
+        cache: "no-store",
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }
     );
 
     if (!res.ok) {

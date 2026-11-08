@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { BookOpen, CircleCheck, Clock, Loader2, RotateCcw } from "lucide-react";
+import getTokenFromClient from "@/lib/getTokenFromClient";
 
 export interface BorrowRecord {
   _id: string;
@@ -99,12 +100,17 @@ const MyBorrowsList = ({
       toast.error("Backend URL is not configured.");
       return;
     }
-
+    const token = await getTokenFromClient()
     try {
       setReturningId(id);
       const res = await fetch(
         `${backendBaseUrl.replace(/\/+$/, "")}/my-borrows/${id}`,
-        { method: "DELETE" },
+        { method: "DELETE",
+          headers:{
+                  authorization: `Bearer ${token}`
+                }
+         },
+
       );
       const data = await res.json().catch(() => null);
 

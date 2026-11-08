@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import ProfileClientView from "./profile-client-view";
+import getTokenFromServer from "@/lib/getTokenFromServer";
 
 const getBackendBaseUrl = () =>
   (
@@ -9,15 +10,17 @@ const getBackendBaseUrl = () =>
     "http://localhost:8000"
   ).replace(/\/+$/, "");
 
-// সার্ভার থেকে ইউজারের যোগ করা বই এবং বরো করা বইয়ের কাউন্ট ফেচ করার ফাংশন
 async function fetchUserCounts(email: string) {
   const backendBaseUrl = getBackendBaseUrl();
+  const token = await getTokenFromServer()
   try {
-    // ১. My Books কাউন্ট ফেচ
     const booksRes = await fetch(
       `${backendBaseUrl}/my-books/${encodeURIComponent(email)}`,
       {
         cache: "no-store",
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
       },
     );
     const booksData = booksRes.ok ? await booksRes.json() : [];
