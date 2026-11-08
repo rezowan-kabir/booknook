@@ -53,8 +53,15 @@ const BorrowBookModal = ({ book, user = null }) => {
         returnDate,
       };
       const token = await getTokenFromClient()
+      const backendBaseUrl =
+        process.env.NEXT_PUBLIC_BACKEND_BASE_URL?.replace(/\/+$/, "");
+
+      if (!backendBaseUrl) {
+        throw new Error("Backend URL is not configured.");
+      }
+
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/borrows`,
+        `${backendBaseUrl}/borrows`,
         {
           method: "POST",
           headers: {

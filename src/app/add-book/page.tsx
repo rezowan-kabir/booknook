@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Link from "next/link";
 import {
   Compass,
@@ -40,6 +40,7 @@ export default function AddBookPage() {
   const [description, setDescription] = useState("");
   const [uploading, setUploading] = useState(false);
   const [uploadMode, setUploadMode] = useState<"file" | "url">("file");
+  const bookCoverInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -131,7 +132,17 @@ export default function AddBookPage() {
       }
 
       console.log("Book submission response:", data);
-      toast.success("Book successfully added to the collection!");
+      setTitle("");
+      setAuthor("");
+      setCategory("Fiction");
+      setTotalCopies("3");
+      setImageUrl("");
+      setDescription("");
+      setUploadMode("file");
+      if (bookCoverInputRef.current) {
+        bookCoverInputRef.current.value = "";
+      }
+      toast.success("Book added. The form is ready for another book.");
     } catch (error) {
       console.error("Error submitting book:", error);
       toast.error(
@@ -291,9 +302,11 @@ export default function AddBookPage() {
                       </>
                     )}
                     <input
+                      ref={bookCoverInputRef}
                       type="file"
                       accept="image/*"
                       onChange={handleImageUpload}
+                      disabled={uploading}
                       className="hidden"
                     />
                   </label>
