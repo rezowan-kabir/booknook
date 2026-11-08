@@ -2,6 +2,11 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import ProfileClientView from "./profile-client-view";
 import getTokenFromServer from "@/lib/getTokenFromServer";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "BookNook | Profile",
+};
 
 const getBackendBaseUrl = () =>
   (
@@ -15,7 +20,7 @@ async function fetchUserCounts(email: string) {
   const token = await getTokenFromServer()
   try {
     const booksRes = await fetch(
-      `${backendBaseUrl}/my-books/${encodeURIComponent(email)}`,
+      `${backendBaseUrl}/books/user/${encodeURIComponent(email)}`,
       {
         cache: "no-store",
         headers: {
@@ -26,11 +31,13 @@ async function fetchUserCounts(email: string) {
     const booksData = booksRes.ok ? await booksRes.json() : [];
     const booksAddedCount = Array.isArray(booksData) ? booksData.length : 0;
 
-    // ২. Active Borrows কাউন্ট ফেচ
     const borrowsRes = await fetch(
-      `${backendBaseUrl}/my-borrow/${encodeURIComponent(email)}`,
+      `${backendBaseUrl}/borrows/${encodeURIComponent(email)}`,
       {
         cache: "no-store",
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
       },
     );
     const borrowsData = borrowsRes.ok ? await borrowsRes.json() : [];
@@ -51,14 +58,12 @@ async function fetchUserCounts(email: string) {
 }
 
 export default async function ProfilePage() {
-  // BetterAuth দিয়ে লগইন করা ইউজারের সেশন ফেচ করা
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
   const user = session?.user;
 
-  // যদি ইউজার লগইন করা না থাকে
   if (!user) {
     return (
       <div className="flex min-h-[70vh] items-center justify-center bg-[#F7F5F0] dark:bg-stone-950 px-4">
@@ -80,14 +85,12 @@ export default async function ProfilePage() {
     );
   }
 
-  // ডাটাবেজ থেকে কাউন্ট ফেচ করা
   const { booksAddedCount, activeBorrowsCount } = await fetchUserCounts(
     user.email,
   );
 
   return (
     <div className="flex min-h-[85vh] items-center justify-center bg-[#F7F5F0] dark:bg-stone-950 px-4 py-12">
-      {/* ক্লায়েন্ট কম্পোনেন্টে ইউজার ডাটা এবং কাউন্ট পাস করা হলো */}
       <ProfileClientView
         user={{
           name: user.name || "BookNook Member",

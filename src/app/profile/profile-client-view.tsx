@@ -39,7 +39,6 @@ export default function ProfileClientView({
     setIsSaving(true);
 
     try {
-      // Better Auth persists name/image on the session user (POST /update-user).
       const result = await authClient.updateUser({
         name: name.trim(),
         image: image.trim(),
@@ -53,7 +52,6 @@ export default function ProfileClientView({
         description: "Your name and photo are now live.",
       });
       setIsEditing(false);
-      // Re-run the server page so the session data re-syncs everywhere.
       router.refresh();
     } catch (error) {
       console.error(error);
@@ -69,7 +67,7 @@ export default function ProfileClientView({
 
   return (
     <div className="relative w-full max-w-lg rounded-2xl border-0 bg-white p-8 shadow-xl dark:border dark:border-stone-800 dark:bg-stone-900">
-      {/* Close → back to home */}
+      
       <button
         type="button"
         onClick={() => router.push("/")}
@@ -79,7 +77,7 @@ export default function ProfileClientView({
         <X className="h-5 w-5" />
       </button>
 
-      {/* Avatar + identity */}
+     
       <div className="flex flex-col items-center text-center">
         <div className="mb-4 h-20 w-20 rounded-full border-2 border-amber-400 p-1 dark:border-amber-500/60">
           <Image
@@ -105,7 +103,7 @@ export default function ProfileClientView({
 
       <div className="my-5 border-t border-stone-200 dark:border-stone-800" />
 
-      {/* Stats grid */}
+      
       <div className="grid grid-cols-2 gap-3">
         <div className="rounded-lg border border-stone-200 bg-[#FFFCF5] p-4 shadow-xs dark:border-stone-800 dark:bg-amber-950/20">
           <div className="mb-2 flex items-center gap-2 text-amber-800 dark:text-amber-400">

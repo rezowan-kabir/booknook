@@ -54,7 +54,7 @@ const BorrowBookModal = ({ book, user = null }) => {
       };
       const token = await getTokenFromClient()
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/my-borrows`,
+        `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/borrows`,
         {
           method: "POST",
           headers: {
@@ -79,7 +79,7 @@ const BorrowBookModal = ({ book, user = null }) => {
 
       setIsOpen(false);
 
-      // Re-run the server component so the availability badge updates.
+      
       router.refresh();
     } catch (error) {
       console.error(error);
@@ -102,18 +102,18 @@ const BorrowBookModal = ({ book, user = null }) => {
         {availableCopies > 0 ? "Borrow This Book" : "Not Available"}
       </button>
 
-      {/* Modal */}
+     
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          {/* Overlay */}
+          
           <div
             onClick={() => setIsOpen(false)}
             className="absolute inset-0 bg-stone-900/50 backdrop-blur-[2px]"
           />
 
-          {/* Modal Content */}
+          
           <div className="relative bg-white w-full max-w-md rounded-sm shadow-xl border border-stone-200 p-6 sm:p-7">
-            {/* Header */}
+            
             <div className="flex items-center justify-between border-b border-stone-200 pb-4">
               <h2 className="flex items-center gap-2 font-serif font-medium text-base text-stone-900">
                 <Bookmark size={17} className="text-amber-800" />
@@ -129,7 +129,6 @@ const BorrowBookModal = ({ book, user = null }) => {
               </button>
             </div>
 
-            {/* Book Information */}
             <div className="mt-5 flex items-center gap-3.5 border border-stone-200 bg-stone-50/60 rounded-sm p-3">
               <div className="relative w-10 h-14 rounded-none overflow-hidden shrink-0 border border-stone-300 shadow-sm">
                 <Image
@@ -158,7 +157,7 @@ const BorrowBookModal = ({ book, user = null }) => {
 
             {/* Borrow Form */}
             <form onSubmit={handleBorrow} className="mt-5 space-y-4">
-              {/* Borrower Name */}
+              
               <div>
                 <label className="block text-[11px] font-semibold text-stone-500 uppercase tracking-wider mb-1">
                   Borrower Name
@@ -173,7 +172,7 @@ const BorrowBookModal = ({ book, user = null }) => {
                 />
               </div>
 
-              {/* Borrower Email */}
+              
               <div>
                 <label className="block text-[11px] font-semibold text-stone-500 uppercase tracking-wider mb-1">
                   Borrower Email
@@ -188,7 +187,7 @@ const BorrowBookModal = ({ book, user = null }) => {
                 />
               </div>
 
-              {/* Return Date */}
+              
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <label className="text-[11px] font-semibold text-stone-500 uppercase tracking-wider">
@@ -208,7 +207,7 @@ const BorrowBookModal = ({ book, user = null }) => {
                 />
               </div>
 
-              {/* Information */}
+              
               <div className="bg-amber-50/50 border border-amber-200/60 rounded-sm p-3 flex items-start gap-2.5">
                 <ShieldCheck
                   size={15}
@@ -220,7 +219,7 @@ const BorrowBookModal = ({ book, user = null }) => {
                 </p>
               </div>
 
-              {/* Actions */}
+              
               <div className="flex justify-end items-center gap-3 pt-2">
                 <button
                   type="button"

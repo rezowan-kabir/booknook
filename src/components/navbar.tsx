@@ -9,7 +9,7 @@ import {
   Moon,
   LogOut,
   User as UserIcon,
-  PlusCircle,
+  
   BookMarked,
   Library,
   Menu,
@@ -24,7 +24,6 @@ export const Navbar = () => {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
 
-  // Better auth useSession hook
   const { data: session, isPending, error, refetch } = authClient.useSession();
   const user = session?.user;
 
@@ -61,7 +60,6 @@ export const Navbar = () => {
     }
   };
 
-  // নেভবার লিংকস: ইউজার লগইন থাকলে নিচের পেজগুলো দেখাবে, না থাকলে শুধু Home ও All Books দেখাবে
   const navLinks = [
     { label: "Home", path: "/" },
     { label: "All Books", path: "/all-books" },
@@ -77,7 +75,6 @@ export const Navbar = () => {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-stone-200/80 dark:border-stone-800/80 bg-amber-50/90 dark:bg-stone-950/90 backdrop-blur-md transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-8">
-        {/* Brand Logo & Name */}
         <Link
           href="/"
           className="flex items-center gap-2.5 text-stone-900 dark:text-stone-100 group shrink-0"
@@ -95,7 +92,6 @@ export const Navbar = () => {
           </span>
         </Link>
 
-        {/* Desktop Navigation Links */}
         <nav className="hidden md:flex items-center gap-7">
           {navLinks.map((link) => {
             const isActive = pathname === link.path;
@@ -118,9 +114,7 @@ export const Navbar = () => {
           })}
         </nav>
 
-        {/* Right Actions: Theme Toggle & Auth */}
         <div className="flex items-center gap-4 shrink-0">
-          {/* Dark / Light Theme Toggle */}
           <button
             onClick={toggleTheme}
             className="p-2 rounded-sm text-stone-600 dark:text-stone-300 hover:bg-stone-200/60 dark:hover:bg-stone-800 transition-colors"
@@ -133,13 +127,13 @@ export const Navbar = () => {
             )}
           </button>
 
-          {/* Loading state handling */}
+          
           {isPending ? (
             <div className="flex items-center justify-center p-2">
               <Loader2 className="w-5 h-5 animate-spin text-stone-400" />
             </div>
           ) : user ? (
-            /* Logged In User Dropdown */
+            
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setDropdownOpen((prev) => !prev)}

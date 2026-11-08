@@ -4,6 +4,11 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import MyBorrowsList, { type BorrowRecord } from "./my-borrows-list";
 import getTokenFromServer from "@/lib/getTokenFromServer";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "BookNook | My Borrows",
+};
 
 const getBackendBaseUrl = () =>
   (
@@ -20,9 +25,9 @@ async function fetchBorrows(email: string): Promise<BorrowRecord[] | null> {
   } 
   const token = await getTokenFromServer()
   try {
-    // আপনার ব্যাকএন্ডের রাউট: /my-borrow/:email
+    
     const res = await fetch(
-      `${backendBaseUrl}/my-borrow/${encodeURIComponent(email)}`,
+      `${backendBaseUrl}/borrows/${encodeURIComponent(email)}`,
       {
         cache: "no-store",
         headers: {

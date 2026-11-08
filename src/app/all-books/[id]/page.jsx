@@ -7,6 +7,10 @@ import { headers } from "next/headers";
 import BorrowBookModal from "./BorrowBookModal";
 import getTokenFromServer from "@/lib/getTokenFromServer";
 
+export const metadata = {
+  title: "BookNook | Book Details",
+};
+
 const BookDetailsPage = async ({ params }) => {
   const { id } = await params;
   
@@ -22,7 +26,7 @@ const BookDetailsPage = async ({ params }) => {
  const token = await getTokenFromServer()
 
   try {
-    const res = await fetch(`${process.env.BACKEND_BASE_URL}/all-books/${id}`, {
+    const res = await fetch(`${process.env.BACKEND_BASE_URL}/books/${id}`, {
       cache: "no-store",
       headers:{
         authorization: `Bearer ${token}`
@@ -81,8 +85,7 @@ const BookDetailsPage = async ({ params }) => {
     addedBy,
   } = book;
 
-  // Counter maintained by the backend ($inc on borrow/return). 
-  // Older documents without it fall back to the cataloged count.
+  
   const availableCopies = book.availableCopies ?? totalCopies;
 
   return (
@@ -102,7 +105,6 @@ const BookDetailsPage = async ({ params }) => {
           <div className="grid grid-cols-1 md:grid-cols-[32%_68%] gap-10">
             {/* Left Section */}
             <div>
-              {/* Book Cover */}
               <div className="relative bg-stone-100 rounded-sm p-6 flex justify-center border border-stone-200">
                 <span className="absolute top-3 right-3 bg-stone-900 text-stone-100 text-[11px] font-medium px-2.5 py-0.5 rounded-none z-10 tracking-wide uppercase">
                   {availableCopies > 0
@@ -122,7 +124,7 @@ const BookDetailsPage = async ({ params }) => {
                 </div>
               </div>
 
-              {/* Book Statistics */}
+             
               <div className="mt-4 border border-stone-200 rounded-sm p-4 text-xs space-y-2.5 bg-stone-50/50">
                 <div className="flex justify-between">
                   <span className="text-stone-500">Total Cataloged:</span>
@@ -144,11 +146,10 @@ const BookDetailsPage = async ({ params }) => {
                 </div>
               </div>
             </div>
-
             {/* Right Section */}
             <div className="flex flex-col justify-between">
               <div>
-                {/* Category */}
+               
                 <div className="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-widest mb-3">
                   <span className="text-amber-900 font-semibold">
                     {category}
@@ -157,12 +158,12 @@ const BookDetailsPage = async ({ params }) => {
                   <span className="text-stone-400">Archived Volume</span>
                 </div>
 
-                {/* Book Title */}
+                
                 <h1 className="text-3xl md:text-4xl font-serif font-normal text-stone-900 tracking-tight leading-snug">
                   {title}
                 </h1>
 
-                {/* Author */}
+                
                 <p className="mt-2 text-sm text-stone-600 font-serif italic">
                   by{" "}
                   <span className="not-italic font-medium text-stone-900">
@@ -170,7 +171,7 @@ const BookDetailsPage = async ({ params }) => {
                   </span>
                 </p>
 
-                {/* Added By */}
+              
                 <div className="mt-6 border-l-2 border-amber-800 bg-stone-50 p-3 flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-stone-800 text-stone-100 flex items-center justify-center text-xs font-medium">
                     {addedBy?.name?.charAt(0) || "U"}
@@ -189,7 +190,7 @@ const BookDetailsPage = async ({ params }) => {
                   </div>
                 </div>
 
-                {/* Description */}
+                
                 <div className="mt-6">
                   <h3 className="font-serif font-medium text-xs uppercase tracking-wider text-stone-700 border-b border-stone-200 pb-1 mb-2">
                     About This Volume
@@ -200,7 +201,7 @@ const BookDetailsPage = async ({ params }) => {
                 </div>
               </div>
 
-              {/* Bottom Actions */}
+              
               <div className="mt-10 pt-4 border-t border-stone-200 flex flex-col sm:flex-row gap-3">
                 <BorrowBookModal book={book} user={user} />
 

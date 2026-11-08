@@ -50,11 +50,10 @@ export const BorrowingSteps: React.FC = () => {
         </p>
       </div>
 
-      {/* Steps Layout - Natural Flow */}
+      
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
         {steps.map((step, index) => (
           <div key={step.number} className="relative flex flex-col">
-            {/* Top subtle line accent or step number indicator */}
             <div className="flex items-center gap-3 mb-4">
               <span className="font-serif text-2xl font-bold text-amber-700/80 dark:text-amber-500/80">
                 {step.number}

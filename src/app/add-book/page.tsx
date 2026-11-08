@@ -115,7 +115,7 @@ export default function AddBookPage() {
       }
       const token = await getTokenFromClient();
 
-      const res = await fetch(`${backendBaseUrl.replace(/\/+$/, "")}/add-book`, {
+      const res = await fetch(`${backendBaseUrl.replace(/\/+$/, "")}/books`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -163,7 +163,7 @@ export default function AddBookPage() {
       <Card className="bg-stone-50/50 dark:bg-stone-900/50 border-stone-200 dark:border-stone-800 rounded-sm">
         <CardContent className="p-6">
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Title */}
+          
             <div className="space-y-1.5">
               <Label
                 htmlFor="title"
@@ -181,7 +181,7 @@ export default function AddBookPage() {
               />
             </div>
 
-            {/* Author & Category */}
+           
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label
@@ -224,7 +224,7 @@ export default function AddBookPage() {
               </div>
             </div>
 
-            {/* Total Copies */}
+            
             <div className="space-y-1.5">
               <Label
                 htmlFor="copies"
@@ -243,7 +243,7 @@ export default function AddBookPage() {
               />
             </div>
 
-            {/* Image Input Section */}
+            
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label className="text-xs font-medium text-stone-700 dark:text-stone-300">
@@ -319,7 +319,7 @@ export default function AddBookPage() {
               )}
             </div>
 
-            {/* Description */}
+            
             <div className="space-y-1.5">
               <Label
                 htmlFor="description"
@@ -338,7 +338,7 @@ export default function AddBookPage() {
               />
             </div>
 
-            {/* Read-Only User Info Section (Bottom of Form) */}
+            
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-stone-200 dark:border-stone-800">
               <div className="space-y-1.5">
                 <Label

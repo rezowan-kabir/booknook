@@ -79,7 +79,17 @@ export default function LoginPage() {
       toast.success("Signed in successfully!", {
         description: "Welcome back.",
       });
-      router.push("/");
+      
+      const callbackUrl = new URLSearchParams(window.location.search).get(
+        "callbackUrl",
+      );
+      const safeCallbackUrl =
+        callbackUrl &&
+        callbackUrl.startsWith("/") &&
+        !callbackUrl.startsWith("//")
+          ? callbackUrl
+          : "/";
+      router.push(safeCallbackUrl);
     } catch (error) {
       console.error(error);
       toast.error("Login failed. Please try again.");
@@ -113,7 +123,7 @@ export default function LoginPage() {
           Continue with Google
         </button>
 
-        {/* Divider */}
+        
         <div className="my-5 flex items-center gap-3">
           <span className="h-px flex-1 bg-stone-200 dark:bg-stone-800" />
           <span className="text-[11px] font-medium uppercase tracking-wider text-stone-400 dark:text-stone-500">
@@ -188,7 +198,7 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Footer link */}
+        
         <div className="mt-6 border-t border-stone-100 pt-5 text-center text-xs text-stone-500 dark:border-stone-800 dark:text-stone-400">
           Don&apos;t have a library account yet?{" "}
           <Link

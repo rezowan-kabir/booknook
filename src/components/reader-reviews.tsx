@@ -60,7 +60,7 @@ export const ReaderReviews: React.FC = () => {
         </div>
       </div>
 
-      {/* Review Cards */}
+     
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {reviews.map((review) => (
           <div
@@ -68,7 +68,7 @@ export const ReaderReviews: React.FC = () => {
             className="bg-stone-50/50 dark:bg-stone-900/50 p-6 border border-stone-200/80 dark:border-stone-800 rounded-sm flex flex-col justify-between transition-all duration-200 hover:border-stone-300 dark:hover:border-stone-700"
           >
             <div>
-              {/* Stars */}
+              
               <div className="flex items-center gap-1 mb-4">
                 {Array.from({ length: review.rating }).map((_, i) => (
                   <Star
@@ -78,13 +78,13 @@ export const ReaderReviews: React.FC = () => {
                 ))}
               </div>
 
-              {/* Quote */}
+             
               <p className="font-serif text-sm text-stone-700 dark:text-stone-300 leading-relaxed mb-6">
                 &ldquo;{review.quote}&rdquo;
               </p>
             </div>
 
-            {/* Author */}
+            
             <div className="flex items-center gap-3 pt-4 border-t border-stone-200/60 dark:border-stone-800">
               <div className="w-8 h-8 rounded-full bg-stone-200 dark:bg-stone-800 flex items-center justify-center text-stone-700 dark:text-stone-300 text-xs font-medium shrink-0">
                 {review.initials}

@@ -5,6 +5,11 @@ import { auth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import MyBooksList, { type Book } from "./my-books-list";
 import getTokenFromServer from "@/lib/getTokenFromServer";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "BookNook | My Books",
+};
 
 const getBackendBaseUrl = () =>
   (
@@ -23,7 +28,7 @@ async function fetchMyBooks(email: string): Promise<Book[] | null> {
   const token = await getTokenFromServer()
   try {
     const res = await fetch(
-      `${backendBaseUrl}/my-books/${encodeURIComponent(email)}`,
+      `${backendBaseUrl}/books/user/${encodeURIComponent(email)}`,
       {
         cache: "no-store",
         headers: {
@@ -39,7 +44,7 @@ async function fetchMyBooks(email: string): Promise<Book[] | null> {
     const data = await res.json();
     return Array.isArray(data) ? data : null;
   } catch (error) {
-    // Backend unreachable or errored — degrade instead of crashing the page.
+
     console.error("Error fetching user books:", error);
     return null;
   }
@@ -83,12 +88,12 @@ export default async function MyBooksPage() {
           </Link>
         </div>
 
-        {/* Divider */}
+       
         <div className="mb-10 border-b border-stone-200 dark:border-stone-800" />
 
         {!user ? (
-          /* Not signed in — the shelf is scoped to the account. */
-          <div className="rounded-md border border-dashed border-stone-200 bg-white/60 px-6 py-20 text-center dark:border-stone-800 dark:bg-stone-900/20">
+
+<div className="rounded-md border border-dashed border-stone-200 bg-white/60 px-6 py-20 text-center dark:border-stone-800 dark:bg-stone-900/20">
             <BookOpen className="mx-auto mb-3 h-10 w-10 text-stone-400" />
             <p className="mb-1 text-sm font-medium text-stone-700 dark:text-stone-300">
               Sign in to see your shelf
@@ -104,7 +109,6 @@ export default async function MyBooksPage() {
             </Link>
           </div>
         ) : books === null ? (
-          /* Backend unreachable — degrade instead of crashing the page. */
           <div className="rounded-md border border-dashed border-stone-200 bg-white/60 px-6 py-20 text-center dark:border-stone-800 dark:bg-stone-900/20">
             <BookOpen className="mx-auto mb-3 h-10 w-10 text-stone-400" />
             <p className="mb-1 text-sm font-medium text-stone-700 dark:text-stone-300">

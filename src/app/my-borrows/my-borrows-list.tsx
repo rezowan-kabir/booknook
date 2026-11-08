@@ -38,7 +38,7 @@ const formatLongDate = (value?: string) => {
 };
 
 const BookCell = ({ record }: { record: BorrowRecord }) => {
-  // ব্যাকএন্ডে যদি সরাসরি title/imageUrl সেভ হয়ে থাকে অথবা bookDetails অবজেক্টে থাকে, দুইভাবেই সাপোর্ট করবে
+
   const bookTitle =
     record.title || record.bookDetails?.title || "Untitled Book";
   const bookImage = record.imageUrl || record.bookDetails?.imageUrl || "";
@@ -104,7 +104,7 @@ const MyBorrowsList = ({
     try {
       setReturningId(id);
       const res = await fetch(
-        `${backendBaseUrl.replace(/\/+$/, "")}/my-borrows/${id}`,
+        `${backendBaseUrl.replace(/\/+$/, "")}/borrows/${id}`,
         { method: "DELETE",
           headers:{
                   authorization: `Bearer ${token}`
@@ -140,7 +140,7 @@ const MyBorrowsList = ({
 
   return (
     <>
-      {/* Currently Checked Out */}
+      
       <section>
         <div className="mb-4 flex items-center gap-2.5">
           <Clock className="h-5 w-5 shrink-0 text-amber-700 dark:text-amber-500" />
@@ -225,7 +225,7 @@ const MyBorrowsList = ({
         )}
       </section>
 
-      {/* Returned Volumes Archive */}
+      
       {returned.length > 0 && (
         <section className="mt-14">
           <div className="mb-4 flex items-center gap-2.5">

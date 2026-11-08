@@ -60,7 +60,6 @@ function AllBooksContent() {
   const [sortBy, setSortBy] = useState<string>("newest");
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Robust data fetching with proper error handling and abort signaling
   useEffect(() => {
     const controller = new AbortController();
 
@@ -78,7 +77,7 @@ function AllBooksContent() {
         }
 
         const res = await fetch(
-          `${backendBaseUrl.replace(/\/+$/, "")}/all-books`,
+          `${backendBaseUrl.replace(/\/+$/, "")}/books`,
           {
             cache: "no-store",
             signal: controller.signal,
@@ -110,7 +109,7 @@ function AllBooksContent() {
     };
   }, []);
 
-  // Optimized filtering and sorting logic
+ 
   const filteredBooks = React.useMemo(() => {
     return books
       .filter((book) => {
@@ -187,10 +186,10 @@ function AllBooksContent() {
         </p>
       </div>
 
-      {/* Divider */}
+      
       <div className="border-b border-stone-200 dark:border-stone-800 mb-8" />
 
-      {/* Search & Filter Bar */}
+      {/* Search and Filter Bar */}
       <div className="flex flex-col lg:flex-row lg:items-center gap-4 mb-8">
         {/* Search Input */}
         <div className="relative flex-1">
@@ -203,7 +202,7 @@ function AllBooksContent() {
           />
         </div>
 
-        {/* Sort Dropdown */}
+        {/* Dropdown */}
         <div className="flex items-center gap-2.5 shrink-0">
           <span className="text-xs font-medium text-stone-500 dark:text-stone-400">
             Sort by:
@@ -232,7 +231,7 @@ function AllBooksContent() {
         </div>
       </div>
 
-      {/* Category Filter Buttons */}
+      
       <div className="flex flex-wrap items-center gap-2 mb-10">
         {CATEGORIES.map((category) => (
           <button
@@ -249,7 +248,7 @@ function AllBooksContent() {
         ))}
       </div>
 
-      {/* Book Grid */}
+      
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {[...Array(6)].map((_, i) => (
@@ -277,7 +276,7 @@ function AllBooksContent() {
               className="group overflow-hidden bg-white dark:bg-stone-900/60 border-stone-200/80 dark:border-stone-800 hover:border-stone-300 dark:hover:border-stone-700 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer rounded-sm flex flex-col"
               onClick={() => router.push(`/all-books/${book._id}`)}
             >
-              {/* Book Cover Container */}
+              
               <div className="relative aspect-[4/3] overflow-hidden bg-stone-100 dark:bg-stone-800">
                 {book.imageUrl ? (
                   <img

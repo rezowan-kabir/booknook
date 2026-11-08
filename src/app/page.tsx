@@ -2,6 +2,11 @@ import NewArrivals from "@/components/new-arrivals";
 import { HomeHero, HomeTopCategories } from "@/components/home-navigation";
 import { BorrowingSteps } from "@/components/borrowing-steps";
 import { ReaderReviews } from "@/components/reader-reviews";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "BookNook | Home",
+};
 
 export default function Home() {
   return (

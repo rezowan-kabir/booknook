@@ -52,7 +52,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ onBrowse }) => {
 
   return (
     <div className="relative w-full overflow-hidden rounded-sm shadow-xl bg-stone-900 border border-stone-200/40 dark:border-stone-800">
-      {/* Swiper */}
+      
       <Swiper
         modules={[Autoplay, EffectFade]}
         effect="fade"
@@ -83,23 +83,23 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ onBrowse }) => {
                   className="object-cover object-center"
                 />
 
-                {/* Gradient Overlay */}
+                {/* Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-stone-950/95 via-stone-950/60 to-stone-950/40" />
               </div>
 
-              {/* Slide Content */}
+              
               <div className="relative z-10 max-w-4xl mx-auto px-6 sm:px-12 py-16 sm:py-24 flex flex-col justify-end min-h-[480px] text-white">
-                {/* Title */}
+                
                 <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white mb-4 leading-[1.15] text-balance">
                   {slide.title}
                 </h1>
 
-                {/* Subtitle */}
+               
                 <p className="text-stone-200 text-sm sm:text-base md:text-lg max-w-2xl font-normal leading-relaxed mb-6 opacity-95">
                   {slide.subtitle}
                 </p>
 
-                {/* Browse Button */}
+                
                 <div className="flex flex-col sm:flex-row sm:items-center gap-5 pt-2">
                   <button
                     onClick={onBrowse}
@@ -124,7 +124,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ onBrowse }) => {
         ))}
       </Swiper>
 
-      {/* Navigation Arrows */}
+      
       <div className="absolute bottom-6 right-6 z-20 flex items-center gap-2">
         <button
           onClick={() => swiperRef.current?.slidePrev()}

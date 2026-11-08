@@ -45,7 +45,6 @@ const NewArrivals = async () => {
 
     books = await res.json();
   } catch (error) {
-    // Backend unreachable or errored — degrade instead of crashing the homepage.
     console.error("Failed to load new arrivals:", error);
   }
 
@@ -122,7 +121,7 @@ const NewArrivals = async () => {
                       </div>
                     )}
 
-                    {/* Availability badge */}
+                   
                     <span
                       className={`absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-medium shadow-sm dark:bg-stone-900/90 ${
                         inStock
@@ -151,7 +150,7 @@ const NewArrivals = async () => {
                       {book.description}
                     </p>
 
-                    {/* Footer */}
+                    
                     <div className="mt-4 flex items-center justify-between gap-3 border-t border-stone-100 pt-4 dark:border-stone-800">
                       <div className="flex min-w-0 items-center gap-2">
                         <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-100 text-[10px] font-semibold text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">
@@ -173,7 +172,7 @@ const NewArrivals = async () => {
             })}
           </div>
 
-          {/* Bottom CTA */}
+          
           <div className="mt-10 flex justify-center">
             <Link
               href="/all-books"

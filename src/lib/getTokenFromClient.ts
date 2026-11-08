@@ -8,6 +8,3 @@ const getTokenFromClient = async () => {
 
 export default getTokenFromClient;
 
-// headers:{
-//     authorization: `Bearer ${token}`
-// }

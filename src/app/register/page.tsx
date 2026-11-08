@@ -162,7 +162,7 @@ export default function RegisterPage() {
           Sign Up with Google
         </button>
 
-        {/* Divider */}
+        
         <div className="my-5 flex items-center gap-3">
           <span className="h-px flex-1 bg-stone-200 dark:bg-stone-800" />
           <span className="text-[11px] font-medium uppercase tracking-wider text-stone-400 dark:text-stone-500">
@@ -248,7 +248,7 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Live password criteria */}
+          
           <div className="rounded-sm border border-stone-200 bg-stone-50 p-3.5 dark:border-stone-800 dark:bg-stone-950/50">
             <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400">
               Password Criteria

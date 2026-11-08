@@ -29,10 +29,8 @@ export const Footer: React.FC<FooterProps> = ({ navigate: navigateProp }) => {
 
   return (
     <footer className="bg-amber-50 dark:bg-stone-950 border-t border-stone-200 dark:border-stone-800">
-      {/* Main footer content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-16">
-          {/* Zone 1: Brand & Description */}
           <div className="space-y-4">
             <div className="flex items-center gap-2.5">
               <Image
@@ -77,7 +75,7 @@ export const Footer: React.FC<FooterProps> = ({ navigate: navigateProp }) => {
             </div>
           </div>
 
-          {/* Zone 2: Explore Links */}
+          
           <div className="space-y-4">
             <h3 className="font-serif text-lg font-semibold text-stone-900 dark:text-stone-100">
               Explore
@@ -96,7 +94,7 @@ export const Footer: React.FC<FooterProps> = ({ navigate: navigateProp }) => {
             </ul>
           </div>
 
-          {/* Zone 3: Contact & Hours */}
+          
           <div className="space-y-4">
             <h3 className="font-serif text-lg font-semibold text-stone-900 dark:text-stone-100">
               Contact & Hours
@@ -128,7 +126,7 @@ export const Footer: React.FC<FooterProps> = ({ navigate: navigateProp }) => {
         </div>
       </div>
 
-      {/* Bottom bar */}
+      
       <div className="border-t border-stone-200 dark:border-stone-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-stone-500 dark:text-stone-500 text-center md:text-left">

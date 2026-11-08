@@ -99,7 +99,6 @@ const getBackendBaseUrl = () =>
     ""
   ).replace(/\/+$/, "");
 
-/** M/D/YYYY, matching the cataloged date in the design. */
 const formatCataloged = (book: Book) => {
   let date: Date | null = null;
 
@@ -109,7 +108,7 @@ const formatCataloged = (book: Book) => {
   }
 
   if (!date && /^[0-9a-f]{24}$/i.test(book._id)) {
-    // Mongo ObjectIds embed their creation time in the first 4 bytes.
+
     date = new Date(parseInt(book._id.slice(0, 8), 16) * 1000);
   }
 
@@ -137,10 +136,7 @@ export default function MyBooksList({
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // `books` is seeded from the server-rendered props and kept consistent by
-  // the save/delete handlers below — no effect needed. (router.refresh() after
-  // a delete re-renders with data that already matches local state.)
-
+  
   const openEdit = (book: Book) => {
     setForm({
       title: book.title,
@@ -164,19 +160,16 @@ export default function MyBooksList({
     }
 
     setUploading(true);
-    const token = await getTokenFromClient();
     try {
       const formData = new FormData();
       formData.append("image", file);
 
+      //IMGBB
       const response = await fetch(
         `https://api.imgbb.com/1/upload?key=${apiKey}`,
         {
           method: "POST",
           body: formData,
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
         },
       );
       const data = await response.json();
@@ -208,9 +201,13 @@ export default function MyBooksList({
     try {
       setSaving(true);
 
-      const res = await fetch(`${backendBaseUrl}/my-books/${editing._id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
+      const token = await getTokenFromClient();
+      const res = await fetch(`${backendBaseUrl}/books/${editing._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           title: form.title.trim(),
           author: form.author.trim(),
@@ -224,7 +221,7 @@ export default function MyBooksList({
       const data = await res.json().catch(() => null);
 
       if (!res.ok) {
-        // Surface the backend's reason instead of a generic failure.
+
         throw new Error(data?.message || "Failed to save changes.");
       }
 
@@ -261,14 +258,18 @@ export default function MyBooksList({
     try {
       setDeleting(true);
 
-      const res = await fetch(`${backendBaseUrl}/my-books/${removing._id}`, {
+      const token = await getTokenFromClient();
+      const res = await fetch(`${backendBaseUrl}/books/${removing._id}`, {
         method: "DELETE",
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
       });
 
       const data = await res.json().catch(() => null);
 
       if (!res.ok) {
-        // e.g. 409 while copies are still out on loan.
+
         throw new Error(data?.message || "Failed to remove the book.");
       }
 
@@ -580,7 +581,7 @@ export default function MyBooksList({
               />
               {form.imageUrl ? (
                 <div className="flex items-center gap-3 rounded-sm border border-stone-200 bg-stone-50 p-2 dark:border-stone-700 dark:bg-stone-800/60">
-                  {/* eslint-disable-next-line @next/next/no-img-element -- covers are user-supplied URLs that may fall outside next.config remotePatterns */}
+                  
                   <img
                     src={form.imageUrl}
                     alt=""
@@ -646,7 +647,6 @@ export default function MyBooksList({
         }}
       >
         <AlertDialogContent className="sm:max-w-md!">
-          {/* AlertDialogContent ships no close button (Dialog does) — add one. */}
           <AlertDialogCancel
             variant="ghost"
             size="icon-sm"
