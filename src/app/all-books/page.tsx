@@ -61,11 +61,18 @@ function AllBooksContent() {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const controller = new AbortController();
+    let activeController: AbortController | null = null;
+    let requestInProgress = false;
+    let isInitialRequest = true;
 
     const fetchBooks = async () => {
+      if (requestInProgress) return;
+
+      requestInProgress = true;
+      const controller = new AbortController();
+      activeController = controller;
+
       try {
-        setLoading(true);
         const backendBaseUrl =
           process.env.NEXT_PUBLIC_BACKEND_BASE_URL ||
           (process.env.NODE_ENV === "development"
@@ -93,19 +100,43 @@ function AllBooksContent() {
       } catch (error: unknown) {
         if (!(error instanceof Error && error.name === "AbortError")) {
           console.error("Failed to fetch library catalog:", error);
-          toast.error(
-            "Failed to load library catalog. Please try again later.",
-          );
+          if (isInitialRequest) {
+            toast.error(
+              "Failed to load library catalog. Please try again later.",
+            );
+          }
         }
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          requestInProgress = false;
+          isInitialRequest = false;
+          setLoading(false);
+        }
       }
     };
 
-    fetchBooks();
+    const refreshWhenVisible = () => {
+      if (!document.hidden) {
+        void fetchBooks();
+      }
+    };
+
+    void fetchBooks();
+    const refreshInterval = window.setInterval(() => {
+      if (!document.hidden) {
+        void fetchBooks();
+      }
+    }, 15000);
+    window.addEventListener("focus", refreshWhenVisible);
+    document.addEventListener("visibilitychange", refreshWhenVisible);
+    window.addEventListener("pageshow", refreshWhenVisible);
 
     return () => {
-      controller.abort();
+      window.clearInterval(refreshInterval);
+      window.removeEventListener("focus", refreshWhenVisible);
+      document.removeEventListener("visibilitychange", refreshWhenVisible);
+      window.removeEventListener("pageshow", refreshWhenVisible);
+      activeController?.abort();
     };
   }, []);
 
@@ -133,7 +164,10 @@ function AllBooksContent() {
           case "author":
             return (a.author || "").localeCompare(b.author || "");
           case "available":
-            return (b.totalCopies || 0) - (a.totalCopies || 0);
+            return (
+              (b.availableCopies ?? b.totalCopies ?? 0) -
+              (a.availableCopies ?? a.totalCopies ?? 0)
+            );
           default:
             return 0;
         }
@@ -270,12 +304,16 @@ function AllBooksContent() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {filteredBooks.map((book) => (
-            <Card
-              key={book._id}
-              className="group overflow-hidden bg-white dark:bg-stone-900/60 border-stone-200/80 dark:border-stone-800 hover:border-stone-300 dark:hover:border-stone-700 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer rounded-sm flex flex-col"
-              onClick={() => router.push(`/all-books/${book._id}`)}
-            >
+          {filteredBooks.map((book) => {
+            const availableCopies = book.availableCopies ?? book.totalCopies;
+            const isAvailable = availableCopies > 0;
+
+            return (
+              <Card
+                key={book._id}
+                className="group overflow-hidden bg-white dark:bg-stone-900/60 border-stone-200/80 dark:border-stone-800 hover:border-stone-300 dark:hover:border-stone-700 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer rounded-sm flex flex-col"
+                onClick={() => router.push(`/all-books/${book._id}`)}
+              >
               
               <div className="relative aspect-[4/3] overflow-hidden bg-stone-100 dark:bg-stone-800">
                 {book.imageUrl ? (
@@ -292,9 +330,19 @@ function AllBooksContent() {
 
                 <div className="absolute inset-0 bg-gradient-to-t from-stone-950/40 via-transparent to-transparent opacity-60" />
 
-                <div className="absolute top-3 right-3 px-2.5 py-1 text-[11px] font-medium bg-white/90 dark:bg-stone-900/90 backdrop-blur-sm text-emerald-700 dark:text-emerald-300 rounded-full flex items-center gap-1.5 shadow-sm border border-stone-200/50 dark:border-stone-700/50">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  {book.totalCopies} Copies
+                <div
+                  className={`absolute top-3 right-3 px-2.5 py-1 text-[11px] font-medium bg-white/90 dark:bg-stone-900/90 backdrop-blur-sm rounded-full flex items-center gap-1.5 shadow-sm border border-stone-200/50 dark:border-stone-700/50 ${
+                    isAvailable
+                      ? "text-emerald-700 dark:text-emerald-300"
+                      : "text-red-600 dark:text-red-400"
+                  }`}
+                >
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full ${
+                      isAvailable ? "bg-emerald-500" : "bg-red-500"
+                    }`}
+                  />
+                  {isAvailable ? `${availableCopies} Left` : "Not Available"}
                 </div>
 
                 <div className="absolute bottom-3 left-3">
@@ -349,8 +397,9 @@ function AllBooksContent() {
                   </button>
                 </div>
               </CardContent>
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
         </div>
       )}
     </div>
