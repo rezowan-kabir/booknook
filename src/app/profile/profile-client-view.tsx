@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { BookOpen, BookmarkCheck, X } from "lucide-react";
+import { BookOpen, BookmarkCheck, Loader2, Upload, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
@@ -33,6 +33,47 @@ export default function ProfileClientView({
   const [name, setName] = useState(user.name);
   const [image, setImage] = useState(user.image);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+
+    const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
+    if (!apiKey) {
+      toast.error("Image upload is not configured.");
+      return;
+    }
+
+    setIsUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const response = await fetch(
+        `https://api.imgbb.com/1/upload?key=${apiKey}`,
+        { method: "POST", body: formData },
+      );
+      const result = await response.json();
+
+      if (!response.ok || !result.success || !result.data?.url) {
+        throw new Error(result.error?.message || "Image upload failed.");
+      }
+
+      setImage(result.data.url);
+      toast.success("Profile photo uploaded.");
+    } catch (error) {
+      console.error("Profile photo upload failed:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Image upload failed.",
+      );
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -153,19 +194,35 @@ export default function ProfileClientView({
 
           <div className="space-y-1.5">
             <Label
-              htmlFor="profile-image"
+              htmlFor="profile-image-upload"
               className="text-xs font-semibold uppercase tracking-wider text-stone-800 dark:text-stone-200"
             >
-              Avatar Photo URL
+              Avatar Photo
             </Label>
+            <label
+              htmlFor="profile-image-upload"
+              className={`inline-flex cursor-pointer items-center gap-2 rounded-sm border border-stone-300 px-3 py-2 text-xs font-medium text-stone-700 transition-colors hover:bg-stone-50 dark:border-stone-700 dark:text-stone-200 dark:hover:bg-stone-800 ${
+                isUploadingImage ? "pointer-events-none opacity-60" : ""
+              }`}
+            >
+              {isUploadingImage ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Upload className="h-4 w-4" />
+              )}
+              {isUploadingImage ? "Uploading..." : "Upload from device"}
+            </label>
             <Input
-              id="profile-image"
-              type="url"
-              value={image}
-              onChange={(e) => setImage(e.target.value)}
-              required
-              className="h-10"
+              id="profile-image-upload"
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              disabled={isUploadingImage || isSaving}
+              className="sr-only"
             />
+            <p className="text-xs text-stone-500 dark:text-stone-400">
+              {image ? "Photo selected." : "Choose a photo from your device."}
+            </p>
           </div>
 
           <div className="flex items-center justify-end gap-4 border-t border-stone-200 pt-4 dark:border-stone-800">
@@ -173,14 +230,14 @@ export default function ProfileClientView({
               type="button"
               variant="ghost"
               onClick={() => setIsEditing(false)}
-              disabled={isSaving}
+              disabled={isSaving || isUploadingImage}
               className="text-stone-500 hover:text-stone-700 dark:text-stone-400"
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              disabled={isSaving}
+              disabled={isSaving || isUploadingImage}
               className="min-w-[180px] bg-[#9A3412] text-white hover:bg-[#7C2D12] dark:bg-[#9A3412] dark:hover:bg-[#7C2D12]"
             >
               {isSaving ? "Saving..." : "Save"}

@@ -107,7 +107,7 @@ export default function LoginPage() {
         </div>
 
         <h1 className="mx-auto mt-5 max-w-[320px] text-center font-serif text-3xl font-bold leading-tight text-stone-900 dark:text-stone-50">
-          Welcome Back to BookNook
+          Welcome  to BookNook
         </h1>
         <p className="mx-auto mt-2 max-w-xs text-center text-sm text-stone-500 dark:text-stone-400">
           Sign in to borrow titles, view personal shelves, and catalog books.

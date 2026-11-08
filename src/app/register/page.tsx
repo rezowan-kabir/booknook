@@ -9,6 +9,7 @@ import {
   Loader2,
   Lock,
   Mail,
+  Upload,
   User,
   UserPlus,
   X,
@@ -77,6 +78,47 @@ export default function RegisterPage() {
   const [photoUrl, setPhotoUrl] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+
+  const handlePhotoUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+
+    const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
+    if (!apiKey) {
+      toast.error("Image upload is not configured.");
+      return;
+    }
+
+    setUploadingPhoto(true);
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const response = await fetch(
+        `https://api.imgbb.com/1/upload?key=${apiKey}`,
+        { method: "POST", body: formData },
+      );
+      const result = await response.json();
+
+      if (!response.ok || !result.success || !result.data?.url) {
+        throw new Error(result.error?.message || "Image upload failed.");
+      }
+
+      setPhotoUrl(result.data.url);
+      toast.success("Profile photo uploaded.");
+    } catch (error) {
+      console.error("Profile photo upload failed:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Image upload failed.",
+      );
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
 
   const handleGoogleSignUp = () => {
     toast.info("Google sign-up isn't connected yet.", {
@@ -148,9 +190,6 @@ export default function RegisterPage() {
         <h1 className="mt-5 text-center font-serif text-3xl font-bold text-stone-900 dark:text-stone-50">
           Create Member Account
         </h1>
-        <p className="mx-auto mt-2 max-w-xs text-center text-sm text-stone-500 dark:text-stone-400">
-          Join BookNook to borrow books, save favorites, and share your library.
-        </p>
 
         {/* Google sign-up */}
         <button
@@ -162,12 +201,12 @@ export default function RegisterPage() {
           Sign Up with Google
         </button>
 
-        
         <div className="my-5 flex items-center gap-3">
           <span className="h-px flex-1 bg-stone-200 dark:bg-stone-800" />
           <span className="text-[11px] font-medium uppercase tracking-wider text-stone-400 dark:text-stone-500">
-            or fill registration details
+            or
           </span>
+          <span className="h-px flex-1 bg-stone-200 dark:bg-stone-800" />
         </div>
 
         {/* Form */}
@@ -212,19 +251,49 @@ export default function RegisterPage() {
 
           <div>
             <label htmlFor="photoUrl" className={labelClassName}>
-              Photo URL
+              Profile Photo
             </label>
-            <div className="relative">
-              <ImageIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
+
+            {/* Device Upload Container */}
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-3">
+                <label
+                  htmlFor="profile-photo-upload"
+                  className={`inline-flex cursor-pointer items-center gap-2 rounded-sm border border-stone-300 px-4 py-2.5 text-xs font-medium text-stone-700 transition-colors hover:bg-stone-50 dark:border-stone-700 dark:text-stone-200 dark:hover:bg-stone-800 ${
+                    uploadingPhoto ? "pointer-events-none opacity-60" : ""
+                  }`}
+                >
+                  {uploadingPhoto ? (
+                    <Loader2 className="h-4 w-4 animate-spin text-amber-800" />
+                  ) : (
+                    <Upload className="h-4 w-4 text-stone-500" />
+                  )}
+                  {uploadingPhoto
+                    ? "Uploading image..."
+                    : "Upload photo from device"}
+                </label>
+
+                <input
+                  id="profile-photo-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoUpload}
+                  disabled={uploadingPhoto}
+                  className="sr-only"
+                />
+
+                {photoUrl && (
+                  <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
+                    ✓ Photo uploaded successfully
+                  </span>
+                )}
+              </div>
+
               <input
+                type="hidden"
                 id="photoUrl"
                 name="photoUrl"
-                type="url"
                 value={photoUrl}
-                onChange={(event) => setPhotoUrl(event.target.value)}
-                placeholder="https://....(or leave blank for default avatar)"
-                autoComplete="url"
-                className={inputClassName}
               />
             </div>
           </div>
@@ -248,7 +317,6 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          
           <div className="rounded-sm border border-stone-200 bg-stone-50 p-3.5 dark:border-stone-800 dark:bg-stone-950/50">
             <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400">
               Password Criteria
@@ -279,7 +347,7 @@ export default function RegisterPage() {
 
           <button
             type="submit"
-            disabled={submitting}
+            disabled={submitting || uploadingPhoto}
             className="flex w-full items-center justify-center gap-2 rounded-sm bg-amber-700 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-70 dark:bg-amber-700 dark:hover:bg-amber-600"
           >
             {submitting ? (
